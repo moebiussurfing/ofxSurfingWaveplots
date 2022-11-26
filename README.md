@@ -1,14 +1,13 @@
 # OVERVIEW
-**openFrameworks** add-on to easily plot audio signal waveform using different styles.  
+**openFrameworks** add-on to easily plot an audio signal waveform using different customized presets, shapes and styles.  
 
 ## Screenshot
 ![](/example/Capture.PNG)  
 
 ## Features
-- Plot preview **Waveforms** Class. 
-	- Scalable and draggable layout.
-	- Styles editor with presets.
-	- **Bloom Shader** for plot styling.
+- Scalable and draggable layout.
+- Styles editor with presets.
+- **Bloom Shader** for plot styling.
 
 ## Usage
 
