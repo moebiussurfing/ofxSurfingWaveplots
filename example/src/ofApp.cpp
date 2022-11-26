@@ -7,6 +7,14 @@ void ofApp::setup() {
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
+	boxScene.setName("Scene");
+	//bGui_Scene.makeReferenceTo(boxScene.bGui);
+	boxScene.bGui.makeReferenceTo(bGui_Scene);
+	boxScene.setup();
+	boxScene.setUseBorder(true);
+	boxScene.setWidth(1000);
+	boxScene.setHeight(650);
+
 	//-
 
 	int bufferSize = 256;
@@ -102,7 +110,11 @@ void ofApp::drawGui()
 		if (ui.BeginWindow("ofApp")) {
 
 			ui.Add(waveformPlot.bGui, OFX_IM_TOGGLE_ROUNDED);
+			ui.Add(waveformPlot.bGui_PlotIn, OFX_IM_TOGGLE_ROUNDED_MINI);
+			ui.AddSpacingBigSeparated();
+
 			ui.Add(bGui_Scene, OFX_IM_TOGGLE_ROUNDED);
+
 			ui.EndWindow();
 		}
 
@@ -115,6 +127,10 @@ void ofApp::drawGui()
 
 //--------------------------------------------------------------
 void ofApp::drawScene() {
+
+	ofPushStyle();
+	ofPushMatrix();
+	ofTranslate(boxScene.getX(), boxScene.getY());
 
 	ofSetColor(225);
 	ofDrawBitmapString("AUDIO INPUT EXAMPLE", 32, 32);
@@ -201,6 +217,12 @@ void ofApp::drawScene() {
 	string reportString = "buffers received: " + ofToString(bufferCounter) + "\ndraw routines called: " + ofToString(drawCounter) + "\nticks: " + ofToString(soundStream.getTickCount());
 	ofDrawBitmapString(reportString, 32, 589);
 
+	ofPopMatrix();
+	ofPopStyle();
+
+
+	boxScene.draw();
+	boxScene.drawBorder();
 }
 
 //--------------------------------------------------------------
@@ -222,7 +244,9 @@ void ofApp::audioIn(ofSoundBuffer& input) {
 
 		//--
 	
-		waveformPlot.plotIn[i] = input[i * 2];
+		// feed
+		//waveformPlot.plotIn[i] = input[i * 2];
+		waveformPlot.plotIn[i] = left[i];
 	}
 
 	//this is how we get the mean of rms :) 
@@ -246,55 +270,5 @@ void ofApp::keyPressed(int key) {
 	if (key == 'e') {
 		soundStream.stop();
 	}
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg) {
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo) {
-
 }
 

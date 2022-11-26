@@ -711,7 +711,7 @@ public:
 					ui->AddSpacingSeparated();
 
 					//ui->Add(gain, OFX_IM_HSLIDER_MINI);
-					ui->Add(gain, OFX_IM_KNOB_DOTKNOB, 2);
+					ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
 
 					ui->AddSpacingSeparated();
 
