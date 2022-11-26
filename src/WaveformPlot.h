@@ -21,11 +21,15 @@
 #define USE_WAVEFORM_ROUNDED // another circled widget
 #define USE_WAVEFORM_3D_OBJECT // another 3D widget
 
+//#define USE_WAVEFORM_SOUND_OBJECTS 
+
 //--
 
 #include "ofMain.h"
 
+#ifdef USE_WAVEFORM_SOUND_OBJECTS
 #include "ofxSoundObjects.h"
+#endif
 
 #include "ofxSurfingBoxHelpText.h"
 #include "ofxSurfingBoxInteractive.h"
@@ -80,60 +84,65 @@ public:
 */
 
 //--------------------------------------------------------------
-//class WaveformPlot
+#ifdef USE_WAVEFORM_SOUND_OBJECTS
 class WaveformPlot : public ofxSoundObject
+#else
+class WaveformPlot
+#endif
 {
 
+#ifdef USE_WAVEFORM_SOUND_OBJECTS
 public:
 
 	//--------------------------------------------------------------
 	virtual void process(ofSoundBuffer& input, ofSoundBuffer& output) {
 		calculate(input);
 		output = input;
-	} 
-
-	//--------------------------------------------------------------
-	void calculate(ofSoundBuffer& input) 
-	{
-/*
-		size_t nc = input.getNumChannels();
-
-		processData.resize(nc);
-
-
-		auto t = ofGetElapsedTimeMillis();
-
-		if (ofxSoundUtils::getBufferPeaks(input, processData.peak, processData.holdPeak)) {
-			lastPeakTime = t;
-			processData.lastPeak = processData.peak;
-			processData.holdPeak = processData.peak;
-		}
-		else {
-			auto releaseStart = lastPeakTime + getPeakHoldTime();
-			auto releaseEnd = releaseStart + getPeakReleaseTime();
-			if (releaseStart < t && t <= releaseEnd) {
-				float pct = 1.0 - ofMap(t, releaseStart, releaseEnd, 0, 1, true);
-				for (size_t i = 0; i < processData.peak.size(); i++) {
-					processData.holdPeak[i] = processData.lastPeak[i] * pct;
-				}
-			}
-		}
-
-		for (size_t i = 0; i < nc; i++) {
-			processData.rms[i] = input.getRMSAmplitudeChannel(i);
-			processData.bClippingPeak[i] = processData.peak[i] >= 1.0;
-			processData.bClippingRms[i] = processData.rms[i] >= 1.0;
-		}
-
-		std::lock_guard<std::mutex> mtx(mutex);
-		drawData = processData;
-		bNeedsUpdate = true;
-*/
 	}
 
-public:
+	//--------------------------------------------------------------
+	void calculate(ofSoundBuffer& input)
+	{
+		/*
+				size_t nc = input.getNumChannels();
+
+				processData.resize(nc);
+
+
+				auto t = ofGetElapsedTimeMillis();
+
+				if (ofxSoundUtils::getBufferPeaks(input, processData.peak, processData.holdPeak)) {
+					lastPeakTime = t;
+					processData.lastPeak = processData.peak;
+					processData.holdPeak = processData.peak;
+				}
+				else {
+					auto releaseStart = lastPeakTime + getPeakHoldTime();
+					auto releaseEnd = releaseStart + getPeakReleaseTime();
+					if (releaseStart < t && t <= releaseEnd) {
+						float pct = 1.0 - ofMap(t, releaseStart, releaseEnd, 0, 1, true);
+						for (size_t i = 0; i < processData.peak.size(); i++) {
+							processData.holdPeak[i] = processData.lastPeak[i] * pct;
+						}
+					}
+				}
+
+				for (size_t i = 0; i < nc; i++) {
+					processData.rms[i] = input.getRMSAmplitudeChannel(i);
+					processData.bClippingPeak[i] = processData.peak[i] >= 1.0;
+					processData.bClippingRms[i] = processData.rms[i] >= 1.0;
+				}
+
+				std::lock_guard<std::mutex> mtx(mutex);
+				drawData = processData;
+				bNeedsUpdate = true;
+		*/
+	}
+#endif
 
 	//--
+
+public:
 
 	// Smoothing
 
@@ -530,7 +539,7 @@ public:
 
 #ifdef USE_WAVEFORM_ROUNDED
 		params_PlotsWaveform.add(roundedPlot.params_Circled);
-		ui->AddStyle(roundedPlot.bDraw, OFX_IM_HIDDEN);
+		//ui->AddStyle(roundedPlot.bDraw, OFX_IM_HIDDEN);
 #endif
 
 #ifdef USE_WAVEFORM_3D_OBJECT
@@ -610,7 +619,10 @@ public:
 
 			//if(bGui_Main)IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_SMALL;
 
-			if (ui->BeginWindowSpecial(bGui_Main))
+			bool b;
+			if (ui->isThereSpecialWindowFor(bGui_Main)) b = ui->BeginWindowSpecial(bGui_Main);
+			else b = ui->BeginWindow(bGui_Main);
+			if (b)
 			{
 				ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
 				if (!ui->bMinimize) {
@@ -673,8 +685,8 @@ public:
 					}
 				}
 #endif
-
-				ui->EndWindowSpecial();
+				if (ui->isThereSpecialWindowFor(bGui_Main)) ui->EndWindowSpecial();
+				else ui->EndWindow();
 			}
 
 			//--
@@ -684,8 +696,10 @@ public:
 			//if (!ui->bMinimize)
 			{
 				//if(bGui_Edit) IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_MEDIUM;
-
-				if (ui->BeginWindowSpecial(bGui_Edit))
+				bool b;
+				if (ui->isThereSpecialWindowFor(bGui_Edit)) b = ui->BeginWindowSpecial(bGui_Edit);
+				else b = ui->BeginWindow(bGui_Edit);
+				if (b)
 				{
 					//if (!bGui_Main)
 					{
@@ -863,7 +877,8 @@ public:
 						}
 					}
 
-					ui->EndWindowSpecial();
+					if (ui->isThereSpecialWindowFor(bGui_Edit)) ui->EndWindowSpecial();
+					else ui->EndWindow();
 				}
 			}
 
@@ -1522,12 +1537,12 @@ public:
 					}
 
 					ofPopMatrix();
-				}
-#endif
 			}
+#endif
+		}
 			ofPopStyle();
 
-		}
+	}
 
 #ifdef USE_BLOOM
 		ofPushMatrix();
@@ -1568,7 +1583,7 @@ public:
 			ofTranslate(xb, yb);
 			drawLabel();
 			ofPopMatrix();
-		}
+}
 #endif
 
 		// box border and interaction

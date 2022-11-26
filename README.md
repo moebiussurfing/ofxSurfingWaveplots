@@ -1,15 +1,16 @@
-## Overview
-**ofxAddonTemplateCustomApp** is an addon template for openFrameworks to make other addons.
+# OVERVIEW
+**openFrameworks** add-on to easily plot audio signal waveform using different styles.  
 
 ## Screenshot
-![Screenshot](docs/readme_images/Capture1.PNG?raw=true "Screenshot")
+![](/example/Capture.PNG)  
 
 ## Features
-- Can have some app modes  (2 by default). So it can have multiple behaviour modes. (Edit/Use).
+- Plot preview **Waveforms** Class. 
+	- Scalable and draggable layout.
+	- Styles editor with presets.
+	- **Bloom Shader** for plot styling.
 
 ## Usage
-- Copy the folder ```/ofxFboMixerBlend```.
-- Rename the folder to the name of your addon.
 
 ## Code Example
 #### ofApp.h
@@ -37,12 +38,23 @@ void ofApp::keyPressed(int key)
 ```
 
 ## Dependencies
-* [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)  
-* [ofxScaleDragRect](https://github.com/moebiussurfing/ofxScaleDragRect)
+* [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)
+* [ofxSurfingBox](https://github.com/moebiussurfing/ofxSurfingBox)
+* [ofxSurfingImGui](https://github.com/moebiussurfing/ofxSurfingImGui)
+* [ofxImGui](https://github.com/Daandelange/ofxImGui/) / Fork
+* ofxGui / Optional
+* [ofxBloom](https://github.com/P-A-N/ofxBloom) / Optional
+
+## TODO
+* Improve plotting performance using ofMesh.
+* Add **VU meters** FROM ofxSoundObjects.
 
 ## Tested Systems
-* **Windows 10** / **VS 2017** / **OF ~0.11**
-* **macOS**. **High Sierra** / **Xcode9** & **Xcode10** / **OF ~0.11**
+* **Windows 10** / **VS 2022** / **OF ~0.11**
+
+## AUTHOR
+An add-on by **@moebiusSurfing**  
+*(ManuMolina). 2022.*
 
 ## License
-**MIT License**
+*MIT License*
