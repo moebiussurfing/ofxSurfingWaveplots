@@ -50,4 +50,13 @@ class ofApp : public ofBaseApp{
 		
 		ofParameter<bool> bGui_Scene{ "Scene", false };
 		ofxSurfingBoxInteractive boxScene;
+
+
+		//IMGUI_API bool Fader(const char* label, const ImVec2& size, int* v, const int v_min, const int v_max, const char* format = nullptr, float power = 1.0f);
+
+
+		//IMGUI_API void UvMeter(char const* label, ImVec2 const& size, int* value, int v_min, int v_max, int steps = 10, int* stack = nullptr, int* count = nullptr);
+		//IMGUI_API void UvMeter(char const* label, ImVec2 const& size, float* value, float v_min, float v_max, int steps = 10, float* stack = nullptr, int* count = nullptr);
+		//IMGUI_API void UvMeter(ImDrawList* draw_list, char const* label, ImVec2 const& size, int* value, int v_min, int v_max, int steps = 10, int* stack = nullptr, int* count = nullptr);
+		//IMGUI_API void UvMeter(ImDrawList* draw_list, char const* label, ImVec2 const& size, float* value, float v_min, float v_max, int steps = 10, float* stack = nullptr, int*
 };

@@ -607,7 +607,7 @@ public:
 		//initFbo();
 	};
 
-	void drawImGui()
+	void drawImGui(bool bDrawMinimiToggle = true)
 	{
 		if (!bGui) return;
 
@@ -624,14 +624,16 @@ public:
 			else b = ui->BeginWindow(bGui_Main);
 			if (b)
 			{
-				ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
+				if (bDrawMinimiToggle) {
+					ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
+				}
 				if (!ui->bMinimize) {
 					ui->Add(ui->bDebug, OFX_IM_TOGGLE_ROUNDED_MINI);
 					if (ui->bDebug) {
 						ui->AddLabel("Elements: " + ofToString(countsamples + 1));
 					}
 				}
-				ui->AddSpacingSeparated();
+				if (bDrawMinimiToggle) ui->AddSpacingSeparated();
 
 				ui->Add(bGui_Edit, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
 				ui->AddSpacingSeparated();
@@ -703,14 +705,24 @@ public:
 				{
 					//if (!bGui_Main)
 					{
-						ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
-						ui->AddSpacingSeparated();
+						if (bDrawMinimiToggle) {
+							ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
+							ui->AddSpacingSeparated();
+						}
 					}
 
 					ui->Add(bGui_Main, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
+
 					ui->AddSpacingSeparated();
 
 					//ui->Add(gain, OFX_IM_HSLIDER_MINI);
+					//ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
+
+					// Center a single widget
+					float w1 = ui->getWidgetsWidth(1);
+					float w3 = ui->getWidgetsWidth(3);
+					float w = w1 / 2 - w3 / 2;
+					AddSpacingPad(w);
 					ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
 
 					ui->AddSpacingSeparated();
@@ -843,9 +855,9 @@ public:
 							if (ui->BeginTree("BOX"))
 							{
 								ui->Add(W_bTransparent, OFX_IM_TOGGLE_ROUNDED_MINI);
-								if (!W_bTransparent) ui->Add(cPlotBoxBg, OFX_IM_COLOR_INPUT);
+								if (!W_bTransparent) ui->Add(cPlotBoxBg, OFX_IM_COLOR);
 								ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
-								if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, OFX_IM_COLOR_INPUT);
+								if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, OFX_IM_COLOR);
 								ui->EndTree();
 							}
 
@@ -854,12 +866,12 @@ public:
 							if (W_bMesh)
 							{
 								ui->Add(W_bMeshFill, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (W_bMeshFill)ui->Add(cPlotFill, OFX_IM_COLOR_INPUT);
+								if (W_bMeshFill)ui->Add(cPlotFill, OFX_IM_COLOR);
 								ui->Add(W_bMeshStroke, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (W_bMeshStroke)ui->Add(cPlotStroke, OFX_IM_COLOR_INPUT);
+								if (W_bMeshStroke)ui->Add(cPlotStroke, OFX_IM_COLOR);
 							}
 							if (W_bScope1 || W_bScope2 || W_bLine || W_bBars || W_bCircles)
-								ui->Add(cPlotLineBars, OFX_IM_COLOR_INPUT);
+								ui->Add(cPlotLineBars, OFX_IM_COLOR);
 
 							ui->Add(W_Alpha, OFX_IM_HSLIDER_MINI);
 							if (W_bCircles) ui->Add(W_AlphaCircle, OFX_IM_HSLIDER_MINI);
@@ -871,7 +883,7 @@ public:
 							ui->AddSpacingSeparated();
 
 							ui->Add(W_bLabel, OFX_IM_TOGGLE_ROUNDED_MINI);
-							if (W_bLabel) ui->Add(cText, OFX_IM_COLOR_INPUT);
+							if (W_bLabel) ui->Add(cText, OFX_IM_COLOR);
 
 							ui->EndTree();
 						}
@@ -1537,12 +1549,12 @@ public:
 					}
 
 					ofPopMatrix();
-			}
+				}
 #endif
-		}
+			}
 			ofPopStyle();
 
-	}
+			}
 
 #ifdef USE_BLOOM
 		ofPushMatrix();
@@ -1583,12 +1595,12 @@ public:
 			ofTranslate(xb, yb);
 			drawLabel();
 			ofPopMatrix();
-}
+		}
 #endif
 
 		// box border and interaction
 		boxPlotIn.draw();
-	}
+		}
 
 	//--------------------------------------------------------------
 	void doReset()
@@ -1755,4 +1767,4 @@ public:
 			boxPlotIn.setBorderColor(cPlotBoxBorder);
 		}
 	}
-};
+	};

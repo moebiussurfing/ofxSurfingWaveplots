@@ -276,9 +276,9 @@ public:
 			ui->AddSpacing();
 
 			if (bExpand) {
-				ui->Add(cFill, OFX_IM_COLOR_INPUT);
+				ui->Add(cFill, OFX_IM_COLOR);
 				ui->Add(stroke, OFX_IM_STEPPER);
-				if (stroke != 0.f) ui->Add(cStroke, OFX_IM_COLOR_INPUT);
+				if (stroke != 0.f) ui->Add(cStroke, OFX_IM_COLOR);
 				ui->AddSpacing();
 			}
 

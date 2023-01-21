@@ -7,13 +7,16 @@ void ofApp::setup() {
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
+	boxScene.setMode(ofxSurfingBoxInteractive::BOX_LAYOUT::CENTER_CENTER);
 	boxScene.setName("Scene");
-	//bGui_Scene.makeReferenceTo(boxScene.bGui);
-	boxScene.bGui.makeReferenceTo(bGui_Scene);
+	bGui_Scene.makeReferenceTo(boxScene.bGui);
+	//boxScene.bGui.makeReferenceTo(bGui_Scene);
 	boxScene.setup();
 	boxScene.setUseBorder(true);
 	boxScene.setWidth(1000);
 	boxScene.setHeight(650);
+	boxScene.setLockW(true);
+	boxScene.setLockH(true);
 
 	//-
 
@@ -33,10 +36,10 @@ void ofApp::setup() {
 	soundStream.printDeviceList();
 	auto devices = soundStream.getDeviceList(ofSoundDevice::Api::MS_DS);
 
-	if (!devices.empty()) 
+	if (!devices.empty())
 	{
 		ofSoundStreamSettings settings;
-	
+
 		int d = 7;
 		settings.setInDevice(devices[d]);
 		settings.setApi(ofSoundDevice::Api::MS_DS);
@@ -50,7 +53,7 @@ void ofApp::setup() {
 	}
 
 	//-
-	
+
 	setupGui();
 }
 
@@ -98,7 +101,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	if(bGui_Scene) drawScene();
+	if (bGui_Scene) drawScene();
 	drawGui();
 }
 
@@ -114,6 +117,18 @@ void ofApp::drawGui()
 			ui.AddSpacingBigSeparated();
 
 			ui.Add(bGui_Scene, OFX_IM_TOGGLE_ROUNDED);
+
+
+
+
+
+			//int idb = val * 80;
+			//ImGui::Fader("##mastervol", ImVec2(20, 80), &idb, 0, 80, "%d", 1.0f); ImGui::ShowTooltipOnHover("Slide.");
+			//ImGui::SameLine();
+			//static int stack = 0;
+			//static int count = 0;
+			//ImGui::UvMeter("##vuvr", ImVec2(10, 80), &idb, 0, 80, 20); ImGui::ShowTooltipOnHover("Vertical Uv meters.");
+			//ImGui::UvMeter("##huvr", ImVec2(80, 10), &idb, 0, 80, 20, &stack, &count); ImGui::ShowTooltipOnHover("Horizon Uv meters width stack effect.");
 
 			ui.EndWindow();
 		}
@@ -222,7 +237,7 @@ void ofApp::drawScene() {
 
 
 	boxScene.draw();
-	boxScene.drawBorder();
+	//boxScene.drawBorder();
 }
 
 //--------------------------------------------------------------
@@ -243,7 +258,7 @@ void ofApp::audioIn(ofSoundBuffer& input) {
 		numCounted += 2;
 
 		//--
-	
+
 		// feed
 		//waveformPlot.plotIn[i] = input[i * 2];
 		waveformPlot.plotIn[i] = left[i];
@@ -271,4 +286,159 @@ void ofApp::keyPressed(int key) {
 		soundStream.stop();
 	}
 }
-
+//
+//namespace ImGui
+//{
+//	void ImGui::UvMeter(char const* label, ImVec2 const& size, int* value, int v_min, int v_max, int steps, int* stack, int* count)
+//	{
+//		UvMeter(ImGui::GetWindowDrawList(), label, size, value, v_min, v_max, steps, stack, count);
+//	}
+//
+//	void ImGui::UvMeter(ImDrawList* draw_list, char const* label, ImVec2 const& size, int* value, int v_min, int v_max, int steps, int* stack, int* count)
+//	{
+//		float fvalue = (float)*value;
+//		float* fstack = nullptr;
+//		float _f = 0.f;
+//		if (stack) { fstack = &_f; *fstack = (float)*stack; }
+//		UvMeter(draw_list, label, size, &fvalue, (float)v_min, (float)v_max, steps, fstack, count);
+//		*value = (int)fvalue;
+//		if (stack) *stack = (int)*fstack;
+//	}
+//
+//	void ImGui::UvMeter(char const* label, ImVec2 const& size, float* value, float v_min, float v_max, int steps, float* stack, int* count)
+//	{
+//		UvMeter(ImGui::GetWindowDrawList(), label, size, value, v_min, v_max, steps, stack, count);
+//	}
+//
+//	void ImGui::UvMeter(ImDrawList* draw_list, char const* label, ImVec2 const& size, float* value, float v_min, float v_max, int steps, float* stack, int* count)
+//	{
+//		ImVec2 pos = ImGui::GetCursorScreenPos();
+//
+//		ImGui::InvisibleButton(label, size);
+//		float steps_size = (v_max - v_min) / (float)steps;
+//		if (stack && count)
+//		{
+//			if (*value > *stack)
+//			{
+//				*stack = *value;
+//				*count = 0;
+//			}
+//			else
+//			{
+//				*(count) += 1;
+//				if (*count > 10)
+//				{
+//					*stack -= steps_size / 2;
+//					if (*stack < v_min) *stack = v_min;
+//				}
+//			}
+//		}
+//
+//		if (size.y > size.x)
+//		{
+//			float stepHeight = size.y / (v_max - v_min + 1);
+//			auto y = pos.y + size.y;
+//			auto hue = 0.4f;
+//			auto sat = 0.6f;
+//			auto lum = 0.6f;
+//			for (float i = v_min; i <= v_max; i += steps_size)
+//			{
+//				hue = 0.4f - (i / (v_max - v_min)) / 2.0f;
+//				sat = (*value < i ? 0.0f : 0.6f);
+//				lum = (*value < i ? 0.0f : 0.6f);
+//				draw_list->AddRectFilled(ImVec2(pos.x, y), ImVec2(pos.x + size.x, y - (stepHeight * steps_size - 1)), static_cast<ImU32>(ImColor::HSV(hue, sat, lum)));
+//				y = pos.y + size.y - (i * stepHeight);
+//			}
+//			if (stack && count)
+//			{
+//				draw_list->AddLine(ImVec2(pos.x, pos.y + size.y - (*stack * stepHeight)), ImVec2(pos.x + size.x, pos.y + size.y - (*stack * stepHeight)), IM_COL32_WHITE, 2.f);
+//			}
+//		}
+//		else
+//		{
+//			float stepWidth = size.x / (v_max - v_min + 1);
+//			auto x = pos.x;
+//			auto hue = 0.4f;
+//			auto sat = 0.6f;
+//			auto lum = 0.6f;
+//			for (float i = v_min; i <= v_max; i += steps_size)
+//			{
+//				hue = 0.4f - (i / (v_max - v_min)) / 2.0f;
+//				sat = (*value < i ? 0.0f : 0.6f);
+//				lum = (*value < i ? 0.0f : 0.6f);
+//				draw_list->AddRectFilled(ImVec2(x, pos.y), ImVec2(x + (stepWidth * steps_size - 1), pos.y + size.y), static_cast<ImU32>(ImColor::HSV(hue, sat, lum)));
+//				x = pos.x + (i * stepWidth);
+//			}
+//			if (stack && count)
+//			{
+//				draw_list->AddLine(ImVec2(pos.x + (*stack * stepWidth), pos.y), ImVec2(pos.x + (*stack * stepWidth), pos.y + size.y), IM_COL32_WHITE, 2.f);
+//			}
+//		}
+//	}
+//
+//	bool ImGui::Fader(const char* label, const ImVec2& size, int* v, const int v_min, const int v_max, const char* format, float power)
+//	{
+//		ImGuiDataType data_type = ImGuiDataType_S32;
+//		ImGuiWindow* window = GetCurrentWindow();
+//		if (window->SkipItems)
+//			return false;
+//
+//		ImGuiContext& g = *GImGui;
+//		const ImGuiStyle& style = g.Style;
+//		const ImGuiID id = window->GetID(label);
+//
+//		const ImVec2 label_size = CalcTextSize(label, nullptr, true);
+//		const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + size);
+//		const ImRect bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+//
+//		ItemSize(bb, style.FramePadding.y);
+//		if (!ItemAdd(frame_bb, id))
+//			return false;
+//
+//		IM_ASSERT(data_type >= 0 && data_type < ImGuiDataType_COUNT);
+//		if (format == nullptr)
+//			format = "%d";
+//
+//		const bool hovered = ItemHoverable(frame_bb, id);
+//		if ((hovered && g.IO.MouseClicked[0]) || g.NavActivateId == id || g.NavActivateInputId == id)
+//		{
+//			SetActiveID(id, window);
+//			SetFocusID(id, window);
+//			FocusWindow(window);
+//			//        g.ActiveIdAllowNavDirFlags = (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
+//		}
+//
+//		// Draw frame
+//		const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : g.HoveredId == id ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+//		RenderNavHighlight(frame_bb, id);
+//		RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
+//
+//		// Slider behavior
+//		ImRect grab_bb;
+//		const bool value_changed = SliderBehavior(frame_bb, id, data_type, v, &v_min, &v_max, format, power, ImGuiSliderFlags_Vertical, &grab_bb);
+//		if (value_changed)
+//			MarkItemEdited(id);
+//
+//		ImRect gutter;
+//		gutter.Min = grab_bb.Min;
+//		gutter.Max = ImVec2(frame_bb.Max.x - 2.0f, frame_bb.Max.y - 2.0f);
+//		auto w = ((gutter.Max.x - gutter.Min.x) - 4.0f) / 2.0f;
+//		gutter.Min.x += w;
+//		gutter.Max.x -= w;
+//		window->DrawList->AddRectFilled(gutter.Min, gutter.Max, GetColorU32(ImGuiCol_ButtonActive), style.GrabRounding);
+//
+//		// Render grab
+//		window->DrawList->AddRectFilled(grab_bb.Min, grab_bb.Max, GetColorU32(ImGuiCol_Text), style.GrabRounding);
+//
+//		// Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
+//		// For the vertical slider we allow centered text to overlap the frame padding
+//		char value_buf[64];
+//		snprintf(value_buf, 64, format, int(*v * power)); // modify by dicky reduce warning
+//		const char* value_buf_end = value_buf + strlen(value_buf);
+//		RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, nullptr, ImVec2(0.5f, 0.0f));
+//		if (label_size.x > 0.0f)
+//			RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+//
+//		return value_changed;
+//	}
+//}
