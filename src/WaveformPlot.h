@@ -1,6 +1,7 @@
 #pragma once
 
 /*
+
 	TODO:
 
 	remake spread as zoom
@@ -11,6 +12,7 @@
 
 	fft plot example https://github.com/moebiussurfing/examplesOfxMaxim
 	ImGui plot https://github.com/epezent/implot_demos
+
 */
 
 //--
@@ -52,6 +54,12 @@
 #include "WaveformObject.h"
 #endif
 
+// Smoothing
+//#define SMOOTH_MIN 0.600f
+//#define SMOOTH_MAX 0.980f
+#define SMOOTH_MIN 0.15f
+#define SMOOTH_MAX 0.98f
+
 //--
 
 #define SIZE_BUFFER 4096
@@ -90,6 +98,24 @@ class WaveformPlot : public ofxSoundObject
 class WaveformPlot
 #endif
 {
+	//--
+
+public:
+
+	// Smoothing
+	
+	template <typename T>
+	void ofxKuValueSmooth(T& value, T target, float smooth) {
+		value += (target - value) * (1 - smooth);
+	}
+
+	template <typename T>
+	void ofxKuValueSmoothDirected(T& value, T target, float smooth0, float smooth1) {
+		float smooth = (target < value) ? smooth0 : smooth1;
+		ofxKuValueSmooth(value, target, smooth);
+	}
+
+	//--
 
 #ifdef USE_WAVEFORM_SOUND_OBJECTS
 public:
@@ -144,26 +170,6 @@ public:
 
 public:
 
-	// Smoothing
-
-#define SMOOTH_MIN 0.600f
-#define SMOOTH_MAX 0.980f
-
-	template <typename T>
-	void ofxKuValueSmooth(T& value, T target, float smooth) {
-		value += (target - value) * (1 - smooth);
-	}
-
-	template <typename T>
-	void ofxKuValueSmoothDirected(T& value, T target, float smooth0, float smooth1) {
-		float smooth = (target < value) ? smooth0 : smooth1;
-		ofxKuValueSmooth(value, target, smooth);
-	}
-
-	//--
-
-public:
-
 	WaveformPlot()
 	{
 		ofSetCircleResolution(44);
@@ -192,6 +198,9 @@ public:
 	ofParameter<float> smoothVal2;
 	ofParameter<float> smoothGain;
 	ofParameter<bool> bSmooth;
+	ofParameter<int> typeSmooth;
+	vector<string> namesTypeSmooth;
+
 	ofEventListeners listeners;
 
 	//--
@@ -274,7 +283,8 @@ public:
 
 	ofxSurfingGui* ui;
 
-	void setUiPtr(ofxSurfingGui* _ui) {
+	void setUiPtr(ofxSurfingGui* _ui)
+	{
 		ui = _ui;
 		surfingPresets.setUiPtr(_ui);
 
@@ -360,7 +370,7 @@ public:
 	ofParameter<bool> bGui_Edit{ "WAVEFORM EDIT", false };
 	//ofParameter<bool> bGui_Main{ "SOUND PLOTS", true };
 
-	ofParameter<float> gain{ "Gain", 0, -1, 1 };
+	ofParameter<float> gain{ "Gain Plot", 0, -1, 1 };
 
 	// data arrays
 	float plotIn[SIZE_BUFFER]; // make this bigger, just in case
@@ -489,7 +499,7 @@ public:
 
 		// Waveform
 
-		bGui_Plots.set("Plot Signals", true);
+		bGui_Plots.set("PLOTS", true);
 
 		// for presets
 		params_PlotsWaveform.setName("PLOTS WAVEFORM");
@@ -578,11 +588,16 @@ public:
 		smoothVal1.set("Power1", 0.5, 0.0f, 1);
 		smoothVal2.set("Power2", 0.5, 0.0f, 1);
 
+		typeSmooth.set("Type", 0, 0, 1);
+		namesTypeSmooth.push_back("Simple");
+		namesTypeSmooth.push_back("Dual");
+
 		params_Smooth.setName("SMOOTH");
 		params_Smooth.add(bSmooth);
 		params_Smooth.add(smoothGain);
 		params_Smooth.add(smoothVal1);
 		params_Smooth.add(smoothVal2);
+		params_Smooth.add(typeSmooth);
 		params_PlotsWaveform.add(params_Smooth);
 
 		//--
@@ -607,7 +622,7 @@ public:
 		//initFbo();
 	};
 
-	void drawImGui(bool bDrawMinimiToggle = true)
+	void drawImGui(bool bDrawExtras = true)
 	{
 		if (!bGui) return;
 
@@ -615,7 +630,7 @@ public:
 		{
 			//--
 
-			// 1. Plots
+			// Window Main
 
 			//if(bGui_Main)IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_SMALL;
 
@@ -624,19 +639,16 @@ public:
 			else b = ui->BeginWindow(bGui_Main);
 			if (b)
 			{
-				if (bDrawMinimiToggle) {
+				if (bDrawExtras) {
 					ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
 				}
-				if (!ui->bMinimize) {
-					ui->Add(ui->bDebug, OFX_IM_TOGGLE_ROUNDED_MINI);
-					if (ui->bDebug) {
-						ui->AddLabel("Elements: " + ofToString(countsamples + 1));
-					}
-				}
-				if (bDrawMinimiToggle) ui->AddSpacingSeparated();
 
-				ui->Add(bGui_Edit, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
-				ui->AddSpacingSeparated();
+				if (bDrawExtras) ui->AddSpacingSeparated();
+
+				if (bDrawExtras) {
+					ui->Add(bGui_Edit, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
+					ui->AddSpacingSeparated();
+				}
 
 				ui->Add(bGui_PlotIn, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
 				if (bGui_PlotIn)
@@ -687,12 +699,25 @@ public:
 					}
 				}
 #endif
+				//--
+
+				if (!ui->bMinimize) {
+					ui->AddSpacingSeparated();
+					ui->Add(ui->bDebug, OFX_IM_TOGGLE_ROUNDED_MINI);
+					if (ui->bDebug) {
+						ui->AddLabel("Elements: " + ofToString(countsamples + 1));
+					}
+				}
+
+				//--
+
 				if (ui->isThereSpecialWindowFor(bGui_Main)) ui->EndWindowSpecial();
 				else ui->EndWindow();
 			}
 
-			//--
+			//----
 
+			// Window Edit
 			// Settings
 
 			//if (!ui->bMinimize)
@@ -705,15 +730,16 @@ public:
 				{
 					//if (!bGui_Main)
 					{
-						if (bDrawMinimiToggle) {
+						if (bDrawExtras) {
 							ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
 							ui->AddSpacingSeparated();
 						}
 					}
 
-					ui->Add(bGui_Main, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
-
-					ui->AddSpacingSeparated();
+					if (bDrawExtras) {
+						ui->Add(bGui_Main, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
+						ui->AddSpacingSeparated();
+					}
 
 					//ui->Add(gain, OFX_IM_HSLIDER_MINI);
 					//ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
@@ -733,30 +759,66 @@ public:
 
 					if (ui->BeginTree("SMOOTH"))
 					{
+						ui->AddSpacing();
 						ui->Add(bSmooth, OFX_IM_TOGGLE_ROUNDED_SMALL);
+						ui->AddSpacing();
+
 						if (bSmooth)
 						{
-							ImGui::Columns(3, "", false);
-							ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3);
+							ui->AddCombo(typeSmooth, namesTypeSmooth);
+							ui->AddSpacing();
+							// twi different layouts
+							if (typeSmooth == 1) { // dual
+								ImGui::Columns(3, "", false);
+								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3);
+
+								//ImGui::PushID("##R");
+								//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 3)) {
+								//	smoothGain = 0;
+								//	smoothVal1 = 0.5;
+								//	smoothVal2 = 0.5;
+								//}
+								//ImGui::PopID();
+
+								ImGui::NextColumn();
+								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 3);
+								string s;
+								s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
+								ui->AddTooltip(s);
+
+								ImGui::NextColumn();
+								ui->Add(smoothVal2, OFX_IM_VSLIDER_NO_LABELS, 3);
+								s = smoothVal2.getName() + " " + ofToString(smoothVal2.get(), 2);
+								ui->AddTooltip(s);
+								ImGui::Columns(1);
+							}
+							else if (typeSmooth == 0) { // single
+								ImGui::Columns(2, "", false);
+								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 2);
+
+								//ImGui::PushID("##R");
+								//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 2)) {
+								//	smoothGain = 0;
+								//	smoothVal1 = 0.5;
+								//}
+								//ImGui::PopID();
+
+								ImGui::NextColumn();
+								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 2);
+								string s;
+								s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
+								ui->AddTooltip(s);
+								ImGui::Columns(1);
+							}
+
+							ui->AddSpacing();
 							ImGui::PushID("##R");
-							if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 3)) {
+							if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 1)) {
 								smoothGain = 0;
 								smoothVal1 = 0.5;
 								smoothVal2 = 0.5;
 							}
 							ImGui::PopID();
-
-							ImGui::NextColumn();
-							ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 3);
-							string s;
-							s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
-							ui->AddTooltip(s);
-
-							ImGui::NextColumn();
-							ui->Add(smoothVal2, OFX_IM_VSLIDER_NO_LABELS, 3);
-							s = smoothVal2.getName() + " " + ofToString(smoothVal2.get(), 2);
-							ui->AddTooltip(s);
-							ImGui::Columns(1);
 						}
 
 						ui->EndTree();
@@ -985,7 +1047,7 @@ public:
 		{
 			ofColor c = cPlotBoxBg.get();
 			ofClear(c.r, c.g, c.b, 255);
-		}
+	}
 		else ofClear(0);
 #endif
 		//--
@@ -1549,12 +1611,12 @@ public:
 					}
 
 					ofPopMatrix();
-				}
-#endif
 			}
+#endif
+		}
 			ofPopStyle();
 
-			}
+		}
 
 #ifdef USE_BLOOM
 		ofPushMatrix();
@@ -1595,7 +1657,7 @@ public:
 			ofTranslate(xb, yb);
 			drawLabel();
 			ofPopMatrix();
-		}
+}
 #endif
 
 		// box border and interaction

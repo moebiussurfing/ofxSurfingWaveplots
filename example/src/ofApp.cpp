@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	ofSetWindowPosition(-1920, 25);
 
 	ofSetVerticalSync(true);
 	ofSetCircleResolution(80);
@@ -13,10 +14,11 @@ void ofApp::setup() {
 	//boxScene.bGui.makeReferenceTo(bGui_Scene);
 	boxScene.setup();
 	boxScene.setUseBorder(true);
-	boxScene.setWidth(1000);
-	boxScene.setHeight(650);
-	boxScene.setLockW(true);
-	boxScene.setLockH(true);
+	//TODO: must fix
+	//boxScene.setWidth(1000);
+	//boxScene.setHeight(650);
+	//boxScene.setLockW(true);
+	//boxScene.setLockH(true);
 
 	//-
 
@@ -60,6 +62,9 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::setupGui()
 {
+	waveformPlot.bGui_Main = true;
+	waveformPlot.bGui_Edit = true;
+
 	ofLogNotice() << (__FUNCTION__);
 
 	ui.setName("ofApp");
@@ -84,7 +89,21 @@ void ofApp::setupGui()
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {
+void ofApp::update()
+{
+	//TODO: fix workaround
+	static bool bDone = false;
+	if (!bDone)
+	{
+		if (ofGetFrameNum() == 0) {
+			bDone = true;
+			boxScene.setWidth(1000);
+			boxScene.setHeight(650);
+			boxScene.setLockW(true);
+			boxScene.setLockH(true);
+		}
+	}
+
 	//lets scale the vol up to a 0-1 range 
 	scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
 
@@ -118,10 +137,6 @@ void ofApp::drawGui()
 
 			ui.Add(bGui_Scene, OFX_IM_TOGGLE_ROUNDED);
 
-
-
-
-
 			//int idb = val * 80;
 			//ImGui::Fader("##mastervol", ImVec2(20, 80), &idb, 0, 80, "%d", 1.0f); ImGui::ShowTooltipOnHover("Slide.");
 			//ImGui::SameLine();
@@ -133,6 +148,7 @@ void ofApp::drawGui()
 			ui.EndWindow();
 		}
 
+		//waveformPlot.bGui = true;
 		waveformPlot.drawImGui();
 	}
 	ui.End();
@@ -248,7 +264,7 @@ void ofApp::audioIn(ofSoundBuffer& input) {
 	// samples are "interleaved"
 	int numCounted = 0;
 
-	//lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
+	// lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
 	for (size_t i = 0; i < input.getNumFrames(); i++) {
 		left[i] = input[i * 2] * 0.5;
 		right[i] = input[i * 2 + 1] * 0.5;
@@ -264,7 +280,7 @@ void ofApp::audioIn(ofSoundBuffer& input) {
 		waveformPlot.plotIn[i] = left[i];
 	}
 
-	//this is how we get the mean of rms :) 
+	// this is how we get the mean of rms :) 
 	curVol /= (float)numCounted;
 
 	// this is how we get the root of rms :) 

@@ -2,6 +2,7 @@
 
 /*
 
+	WIP
 	fix load settings for box and addon
 	fix broken toggle params
 	use smoothedVol (circle) for the addon vu
@@ -51,6 +52,8 @@ class ofApp : public ofBaseApp{
 		ofParameter<bool> bGui_Scene{ "Scene", false };
 		ofxSurfingBoxInteractive boxScene;
 
+
+		//TODO: other audio widgets
 
 		//IMGUI_API bool Fader(const char* label, const ImVec2& size, int* v, const int v_min, const int v_max, const char* format = nullptr, float power = 1.0f);
 
