@@ -1,19 +1,19 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::setup()
+{
 	ofSetWindowPosition(-1920, 25);
-
 	ofSetVerticalSync(true);
 	ofSetCircleResolution(80);
 	ofBackground(54, 54, 54);
 
-	boxScene.setMode(ofxSurfingBoxInteractive::BOX_LAYOUT::CENTER_CENTER);
-	boxScene.setName("Scene");
-	bGui_Scene.makeReferenceTo(boxScene.bGui);
+	//boxScene.setMode(ofxSurfingBoxInteractive::BOX_LAYOUT::CENTER_CENTER);
+	//boxScene.setName("Scene");
+	//bGui_Scene.makeReferenceTo(boxScene.bGui);
 	//boxScene.bGui.makeReferenceTo(bGui_Scene);
 	boxScene.setup();
-	boxScene.setUseBorder(true);
+	//boxScene.setUseBorder(true);
 	//TODO: must fix
 	//boxScene.setWidth(1000);
 	//boxScene.setHeight(650);
@@ -54,17 +54,20 @@ void ofApp::setup() {
 		soundStream.setup(settings);
 	}
 
-	//-
+	//--
 
 	setupGui();
+
+	//--
+	
+	// waveform
+	waveformPlot.setup();
+	waveformPlot.setUiPtr(&ui);
 }
 
 //--------------------------------------------------------------
 void ofApp::setupGui()
 {
-	waveformPlot.bGui_Main = true;
-	waveformPlot.bGui_Edit = true;
-
 	ofLogNotice() << (__FUNCTION__);
 
 	ui.setName("ofApp");
@@ -73,6 +76,7 @@ void ofApp::setupGui()
 
 	ui.addWindowSpecial(waveformPlot.bGui_Main);
 	ui.addWindowSpecial(waveformPlot.bGui_Edit);
+
 #ifdef USE_WAVEFORM_3D_OBJECT
 	ui.addWindowSpecial(waveformPlot.o.bGui);
 #endif
@@ -84,14 +88,13 @@ void ofApp::setupGui()
 
 	// stack windows vertically/horizontally
 	ui.setWindowsSpecialsOrientation(false);
-
-	waveformPlot.setUiPtr(&ui);
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
 	//TODO: fix workaround
+	// box bug
 	static bool bDone = false;
 	if (!bDone)
 	{
@@ -103,6 +106,8 @@ void ofApp::update()
 			boxScene.setLockH(true);
 		}
 	}
+
+	//--
 
 	//lets scale the vol up to a 0-1 range 
 	scaledVol = ofMap(smoothedVol, 0.0, 0.17, 0.0, 1.0, true);
@@ -119,8 +124,10 @@ void ofApp::update()
 }
 
 //--------------------------------------------------------------
-void ofApp::draw() {
+void ofApp::draw() 
+{
 	if (bGui_Scene) drawScene();
+
 	drawGui();
 }
 
@@ -132,10 +139,20 @@ void ofApp::drawGui()
 		if (ui.BeginWindow("ofApp")) {
 
 			ui.Add(waveformPlot.bGui, OFX_IM_TOGGLE_ROUNDED);
+			ui.Indent();
+			if (waveformPlot.bGui) {
+				ui.Add(waveformPlot.bGui_Main, OFX_IM_TOGGLE_ROUNDED);
+				ui.Add(waveformPlot.bGui_Edit, OFX_IM_TOGGLE_ROUNDED);
+			}
 			ui.Add(waveformPlot.bGui_PlotIn, OFX_IM_TOGGLE_ROUNDED_MINI);
+			ui.Unindent();
+			
 			ui.AddSpacingBigSeparated();
 
+			//--
+
 			ui.Add(bGui_Scene, OFX_IM_TOGGLE_ROUNDED);
+
 
 			//int idb = val * 80;
 			//ImGui::Fader("##mastervol", ImVec2(20, 80), &idb, 0, 80, "%d", 1.0f); ImGui::ShowTooltipOnHover("Slide.");
@@ -149,7 +166,7 @@ void ofApp::drawGui()
 		}
 
 		//waveformPlot.bGui = true;
-		waveformPlot.drawImGui();
+		waveformPlot.drawImGui(false);
 	}
 	ui.End();
 
@@ -302,7 +319,8 @@ void ofApp::keyPressed(int key) {
 		soundStream.stop();
 	}
 }
-//
+
+
 //namespace ImGui
 //{
 //	void ImGui::UvMeter(char const* label, ImVec2 const& size, int* value, int v_min, int v_max, int steps, int* stack, int* count)

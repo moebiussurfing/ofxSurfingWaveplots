@@ -103,7 +103,7 @@ class WaveformPlot
 public:
 
 	// Smoothing
-	
+
 	template <typename T>
 	void ofxKuValueSmooth(T& value, T target, float smooth) {
 		value += (target - value) * (1 - smooth);
@@ -201,7 +201,11 @@ public:
 	ofParameter<int> typeSmooth;
 	vector<string> namesTypeSmooth;
 
+private:
+
 	ofEventListeners listeners;
+
+	bool bDoneStartup = false;
 
 	//--
 
@@ -302,7 +306,7 @@ private:
 	string pathGlobal = "Waveform/";
 	//string pathSettings = "Waveform_Settings";
 
-	bool bDISABLE_CALBACKS = false;//to avoid callback crashes or to enable only after setup()
+	bool bDISABLE_CALLBACKS = false;//to avoid callback crashes or to enable only after setup()
 
 	ofxSurfingBoxInteractive boxPlotIn;
 #ifndef SOUND_DEVICES_DISABLE_OUTPUT
@@ -359,14 +363,14 @@ public:
 	ofParameter<int> index{ "Index", 0, 0, 0 };
 #endif
 
-	ofParameter<bool> bGui{ "WAVEFORM PLOT", true };
+	ofParameter<bool> bGui{ "WAVEFORM", true };
 	ofParameter<bool> bGui_PlotIn{ "Plot In", true };
 	ofParameter<bool> bGui_PlotOut{ "Plot Out", false };
 
 public:
 
 	ofParameter<bool> bGui_Plots;
-	ofParameter<bool> bGui_Main{ "WAVEFORM", true };
+	ofParameter<bool> bGui_Main{ "WAVEFORM MAIN", true };
 	ofParameter<bool> bGui_Edit{ "WAVEFORM EDIT", false };
 	//ofParameter<bool> bGui_Main{ "SOUND PLOTS", true };
 
@@ -447,7 +451,7 @@ public:
 	void startup()
 	{
 		ofLogNotice("WaveformPlot") << (__FUNCTION__);
-		bDISABLE_CALBACKS = false;
+		bDISABLE_CALLBACKS = false;
 
 		doReset();
 
@@ -461,6 +465,11 @@ public:
 
 	void update()
 	{
+		//if (!bDoneStartup) {
+		//	bDoneStartup = true;
+		//	this->startup();
+		//}
+
 		if (boxPlotIn.isChangedShape())
 		{
 			//TODO:
@@ -603,10 +612,13 @@ public:
 		//--
 
 		//TODO:
+		// merge link both
+		//bGui.makeReferenceTo(bGui_Main);
+
 		params.add(bGui);
-		params.add(bGui_Plots);
 		params.add(bGui_Main);
 		params.add(bGui_Edit);
+		params.add(bGui_Plots);
 		params.add(bGui_PlotIn);
 		params.add(bGui_PlotOut);
 		params.add(W_vReset);
@@ -914,12 +926,13 @@ public:
 
 						if (ui->BeginTree("ESTHETIC"))
 						{
+							SurfingGuiTypes stylec = OFX_IM_COLOR_BOX_FULL_WIDTH;
 							if (ui->BeginTree("BOX"))
 							{
 								ui->Add(W_bTransparent, OFX_IM_TOGGLE_ROUNDED_MINI);
-								if (!W_bTransparent) ui->Add(cPlotBoxBg, OFX_IM_COLOR);
+								if (!W_bTransparent) ui->Add(cPlotBoxBg, stylec);
 								ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
-								if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, OFX_IM_COLOR);
+								if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, stylec);
 								ui->EndTree();
 							}
 
@@ -928,12 +941,12 @@ public:
 							if (W_bMesh)
 							{
 								ui->Add(W_bMeshFill, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (W_bMeshFill)ui->Add(cPlotFill, OFX_IM_COLOR);
+								if (W_bMeshFill)ui->Add(cPlotFill, stylec);
 								ui->Add(W_bMeshStroke, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (W_bMeshStroke)ui->Add(cPlotStroke, OFX_IM_COLOR);
+								if (W_bMeshStroke)ui->Add(cPlotStroke, stylec);
 							}
 							if (W_bScope1 || W_bScope2 || W_bLine || W_bBars || W_bCircles)
-								ui->Add(cPlotLineBars, OFX_IM_COLOR);
+								ui->Add(cPlotLineBars, stylec);
 
 							ui->Add(W_Alpha, OFX_IM_HSLIDER_MINI);
 							if (W_bCircles) ui->Add(W_AlphaCircle, OFX_IM_HSLIDER_MINI);
@@ -945,7 +958,7 @@ public:
 							ui->AddSpacingSeparated();
 
 							ui->Add(W_bLabel, OFX_IM_TOGGLE_ROUNDED_MINI);
-							if (W_bLabel) ui->Add(cText, OFX_IM_COLOR);
+							if (W_bLabel) ui->Add(cText, stylec);
 
 							ui->EndTree();
 						}
@@ -1047,7 +1060,7 @@ public:
 		{
 			ofColor c = cPlotBoxBg.get();
 			ofClear(c.r, c.g, c.b, 255);
-	}
+		}
 		else ofClear(0);
 #endif
 		//--
@@ -1611,9 +1624,9 @@ public:
 					}
 
 					ofPopMatrix();
-			}
+				}
 #endif
-		}
+			}
 			ofPopStyle();
 
 		}
@@ -1657,12 +1670,12 @@ public:
 			ofTranslate(xb, yb);
 			drawLabel();
 			ofPopMatrix();
-}
+		}
 #endif
 
 		// box border and interaction
 		boxPlotIn.draw();
-		}
+	}
 
 	//--------------------------------------------------------------
 	void doReset()
@@ -1707,7 +1720,7 @@ public:
 	//--------------------------------------------------------------
 	void Changed_params_PlotsWaveform(ofAbstractParameter& e)
 	{
-		if (bDISABLE_CALBACKS) return;
+		if (bDISABLE_CALLBACKS) return;
 
 		string name = e.getName();
 
@@ -1718,26 +1731,39 @@ public:
 			doReset();
 		}
 
-		/*
+		//TODO:		
+		//workflow
 		else if (name == bGui.getName())
 		{
-			//workflow
-			if (bGui) bGui_Main.set(true);
-
-			return;
+			// Force that one is enabled..
+			if (bGui) 
+			{
+				if (!bGui_Main && !bGui_Edit)
+				{
+					bGui_Main.set(true);
+				}
+				return;
+			}
 		}
-		*/
 
-		/*
-		else if (name == bGui.getName())
+		//workflow
+		// disable global if both are
+		else if (name == bGui_Main.getName() && !bGui_Main)
 		{
-			//workflow
 			if (!bGui_Main && !bGui_Edit)
-				bGui_Main.setWithoutEventNotifications(true);
-
+			{
+				bGui.set(false);
+			}
 			return;
 		}
-		*/
+		else if (name == bGui_Edit.getName() && !bGui_Edit)
+		{
+			if (!bGui_Main && !bGui_Edit)
+			{
+				bGui.set(false);
+			}
+			return;
+		}
 
 		else if (name == bGui_Plots.getName() && bGui_Plots)
 		{
@@ -1829,4 +1855,4 @@ public:
 			boxPlotIn.setBorderColor(cPlotBoxBorder);
 		}
 	}
-	};
+};
