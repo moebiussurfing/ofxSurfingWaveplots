@@ -1,0 +1,6 @@
+ofxBloom
+ofxImGui
+ofxSurfingAudioPlots
+ofxSurfingBox
+ofxSurfingHelpers
+ofxSurfingImGui
