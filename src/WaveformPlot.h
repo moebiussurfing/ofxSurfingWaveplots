@@ -15,9 +15,11 @@
 
 */
 
-//--
+//----
 
-//#define USE_BLOOM // Fx Shader
+// OPTIONAL
+
+#define USE_BLOOM // Fx Shader
 
 // Extra elements
 #define USE_WAVEFORM_ROUNDED // another circled widget
@@ -25,7 +27,7 @@
 
 //#define USE_WAVEFORM_SOUND_OBJECTS 
 
-//--
+//----
 
 #include "ofMain.h"
 
@@ -402,7 +404,7 @@ private:
 
 	ofParameter<float> W_Spread{ "Spread", 0, 0, 1 };
 	ofParameter<float> W_RatioWidth{ "RatioWidth", 0.5f, 0, 1 };
-	ofParameter<float> W_RatioRad{ "RatioRadius", 0.5f, 0, 1 };
+	ofParameter<float> W_RatioRad{ "RatioRad", 0.5f, 0, 1 };
 
 	ofParameter<float> W_WidthMin{ "Min", 0.1f, 0, 1 };
 	ofParameter<bool> W_bAbs{ "Abs", true };
