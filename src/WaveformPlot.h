@@ -364,8 +364,8 @@ public:
 #endif
 
 	ofParameter<bool> bGui{ "WAVEFORM", true };
-	ofParameter<bool> bGui_PlotIn{ "Plot In", true };
-	ofParameter<bool> bGui_PlotOut{ "Plot Out", false };
+	ofParameter<bool> bGui_PlotIn{ "PLOT IN", true };
+	ofParameter<bool> bGui_PlotOut{ "PLOT OUT", false };
 
 public:
 
@@ -415,8 +415,8 @@ private:
 	ofParameter<bool> W_bClampItems{ "ClampItems", true };
 	ofParameter<bool> W_bMirror{ "Mirror", false };
 	ofParameter<float> W_Rounded{ "Rounded", 0, 0, 1 };
-	ofParameter<int> W_LineWidthScope{ "L Scope", 3, 1, 10 };
-	ofParameter<int> W_LineWidthLines{ "L Lines", 3, 1, 10 };
+	ofParameter<int> W_LineWidthScope{ "L 1", 3, 1, 10 };
+	ofParameter<int> W_LineWidthLines{ "L 2", 3, 1, 10 };
 	ofParameter<bool> W_bLabel{ "Label", true };
 	ofParameter<void> W_vReset{ "Reset" };
 
@@ -663,13 +663,13 @@ public:
 				}
 
 				ui->Add(bGui_PlotIn, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
-				if (bGui_PlotIn)
-					if (!ui->bMinimize) {
-						ui->Indent();
-						ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
-						ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
-						ui->Unindent();
-					}
+				//if (bGui_PlotIn)
+				//	if (!ui->bMinimize) {
+				//		ui->Indent();
+				//		ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
+				//		ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
+				//		ui->Unindent();
+				//	}
 
 #ifndef SOUND_DEVICES_DISABLE_OUTPUT
 				ui->AddSpacingSeparated();
@@ -756,12 +756,18 @@ public:
 					//ui->Add(gain, OFX_IM_HSLIDER_MINI);
 					//ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
 
+					//--
+					
 					// Center a single widget
-					float w1 = ui->getWidgetsWidth(1);
-					float w3 = ui->getWidgetsWidth(3);
-					float w = w1 / 2 - w3 / 2;
+					
+					int sz = 2;
+					float w = ui->getWidgetsWidth(sz) / sz;
+					
+					SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
+					flags += SurfingGuiFlags_TooltipValue;
+
 					AddSpacingPad(w);
-					ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
+					ui->Add(gain, OFX_IM_KNOB_TICKKNOB, sz, flags);
 
 					ui->AddSpacingSeparated();
 
@@ -779,15 +785,15 @@ public:
 						{
 							ui->AddCombo(typeSmooth, namesTypeSmooth);
 							ui->AddSpacing();
-						
+
 							SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
 							flags += SurfingGuiFlags_TooltipValue;
 
 							// Two different modes/layouts
 
-							// dual
-							if (typeSmooth == 1) 
-							{ 
+							// Dual
+							if (typeSmooth == 1)
+							{
 								ImGui::Columns(3, "", false);
 								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 4, flags);
 
@@ -811,9 +817,10 @@ public:
 								ui->AddTooltip(s);
 								ImGui::Columns(1);
 							}
-							// single
+
+							// Single
 							else if (typeSmooth == 0)
-							{ 
+							{
 								ImGui::Columns(2, "", false);
 								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3, flags);
 
@@ -914,17 +921,18 @@ public:
 
 						if (ui->BeginTree("EXTRA"))
 						{
+							SurfingGuiTypes t = OFX_IM_CHECKBOX;
 							if (W_bCircles || W_bBars || W_bLine || W_bMesh) {
-								ui->Add(W_bAbs, OFX_IM_TOGGLE_ROUNDED_MINI);
-								ui->Add(W_bMirror, OFX_IM_TOGGLE_ROUNDED_MINI);
-								ui->Add(W_bBottom, OFX_IM_TOGGLE_ROUNDED_MINI);
+								ui->Add(W_bAbs, t);
+								ui->Add(W_bMirror, t);
+								ui->Add(W_bBottom, t);
 								ui->AddSpacing();
 							}
-							ui->Add(W_bClamp, OFX_IM_TOGGLE_ROUNDED_MINI);
-							ui->Add(W_bClampItems, OFX_IM_TOGGLE_ROUNDED_MINI);
+							ui->Add(W_bClamp, t);
+							ui->Add(W_bClampItems, t);
 							ui->AddSpacing();
 
-							ui->Add(W_bHLine, OFX_IM_TOGGLE_ROUNDED_MINI);
+							ui->Add(W_bHLine, t);
 
 							ui->EndTree();
 						}
@@ -938,7 +946,8 @@ public:
 							SurfingGuiTypes stylec = OFX_IM_COLOR_BOX_FULL_WIDTH;
 							if (ui->BeginTree("BOX"))
 							{
-								ui->Add(W_bTransparent, OFX_IM_TOGGLE_ROUNDED_MINI);
+								ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
+								ui->Add(W_bTransparent, OFX_IM_TOGGLE_ROUNDED_SMALL);
 								if (!W_bTransparent) ui->Add(cPlotBoxBg, stylec);
 								ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
 								if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, stylec);
@@ -951,24 +960,29 @@ public:
 							{
 								ui->Add(W_bMeshFill, OFX_IM_TOGGLE_ROUNDED_SMALL);
 								if (W_bMeshFill)ui->Add(cPlotFill, stylec);
+
+								ui->AddSpacing();
+
 								ui->Add(W_bMeshStroke, OFX_IM_TOGGLE_ROUNDED_SMALL);
 								if (W_bMeshStroke)ui->Add(cPlotStroke, stylec);
 							}
 							if (W_bScope1 || W_bScope2 || W_bLine || W_bBars || W_bCircles)
 								ui->Add(cPlotLineBars, stylec);
 
-							ui->Add(W_Alpha, OFX_IM_HSLIDER_MINI);
-							if (W_bCircles) ui->Add(W_AlphaCircle, OFX_IM_HSLIDER_MINI);
-
 							if (W_bScope1 || W_bScope2 || (W_bMesh && W_bMeshStroke))
 								ui->Add(W_LineWidthScope, OFX_IM_STEPPER);
 							if (W_bLine) ui->Add(W_LineWidthLines, OFX_IM_STEPPER);
 
+							ui->Add(W_Alpha, OFX_IM_HSLIDER_MINI);
+							if (W_bCircles) ui->Add(W_AlphaCircle, OFX_IM_HSLIDER_MINI);
+
 							ui->AddSpacingSeparated();
 
 							ui->Add(W_bLabel, OFX_IM_TOGGLE_ROUNDED_MINI);
-							if (W_bLabel) ui->Add(cText, stylec);
-
+							if (W_bLabel) {
+								ui->AddSpacing();
+								ui->Add(cText, stylec);
+							}
 							ui->EndTree();
 						}
 					}
@@ -1633,12 +1647,12 @@ public:
 					}
 
 					ofPopMatrix();
-				}
-#endif
 			}
+#endif
+		}
 			ofPopStyle();
 
-		}
+	}
 
 #ifdef USE_BLOOM
 		ofPushMatrix();
@@ -1679,7 +1693,7 @@ public:
 			ofTranslate(xb, yb);
 			drawLabel();
 			ofPopMatrix();
-		}
+}
 #endif
 
 		// box border and interaction
@@ -1745,7 +1759,7 @@ public:
 		else if (name == bGui.getName())
 		{
 			// Force that one is enabled..
-			if (bGui) 
+			if (bGui)
 			{
 				if (!bGui_Main && !bGui_Edit)
 				{
