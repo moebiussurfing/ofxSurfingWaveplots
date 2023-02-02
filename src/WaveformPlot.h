@@ -779,10 +779,17 @@ public:
 						{
 							ui->AddCombo(typeSmooth, namesTypeSmooth);
 							ui->AddSpacing();
-							// twi different layouts
-							if (typeSmooth == 1) { // dual
+						
+							SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
+							flags += SurfingGuiFlags_TooltipValue;
+
+							// Two different modes/layouts
+
+							// dual
+							if (typeSmooth == 1) 
+							{ 
 								ImGui::Columns(3, "", false);
-								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3);
+								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 4, flags);
 
 								//ImGui::PushID("##R");
 								//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 3)) {
@@ -793,20 +800,22 @@ public:
 								//ImGui::PopID();
 
 								ImGui::NextColumn();
-								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 3);
+								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 4);
 								string s;
 								s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
 								ui->AddTooltip(s);
 
 								ImGui::NextColumn();
-								ui->Add(smoothVal2, OFX_IM_VSLIDER_NO_LABELS, 3);
+								ui->Add(smoothVal2, OFX_IM_VSLIDER_NO_LABELS, 4);
 								s = smoothVal2.getName() + " " + ofToString(smoothVal2.get(), 2);
 								ui->AddTooltip(s);
 								ImGui::Columns(1);
 							}
-							else if (typeSmooth == 0) { // single
+							// single
+							else if (typeSmooth == 0)
+							{ 
 								ImGui::Columns(2, "", false);
-								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 2);
+								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3, flags);
 
 								//ImGui::PushID("##R");
 								//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 2)) {
@@ -816,7 +825,7 @@ public:
 								//ImGui::PopID();
 
 								ImGui::NextColumn();
-								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 2);
+								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 3);
 								string s;
 								s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
 								ui->AddTooltip(s);
@@ -1747,21 +1756,21 @@ public:
 		}
 
 		//workflow
-		// disable global if both are
+		// disable global if both are disabled
 		else if (name == bGui_Main.getName() && !bGui_Main)
 		{
-			if (!bGui_Main && !bGui_Edit)
-			{
-				bGui.set(false);
-			}
+			//if (!bGui_Main && !bGui_Edit)
+			//{
+			//	bGui.set(false);
+			//}
 			return;
 		}
 		else if (name == bGui_Edit.getName() && !bGui_Edit)
 		{
-			if (!bGui_Main && !bGui_Edit)
-			{
-				bGui.set(false);
-			}
+			//if (!bGui_Main && !bGui_Edit)
+			//{
+			//	bGui.set(false);
+			//}
 			return;
 		}
 
