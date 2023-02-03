@@ -16,7 +16,7 @@
 - Styles editor with presets.
 - Smoother to customize animation speed and release behavior.
 - **OPTIONAL**: WIP **Bloom Shader** for post-fx styling. 
-- Easily integrable [RECOMMENDED] with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
+- Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
 <summary>USAGE</summary>
