@@ -15,10 +15,11 @@
 * Combine different reactive to the audio elements:  
     * Scope lines. 
     * Thin lines. 
-    * Rounded bars.
-    * Circled shaped.
-    * Filled or outlined mesh. 
-    * A 3d rective object as example.
+    * Transparent circles.
+    * Rounded fat bars.
+    * Circled shaped elements.
+    * Filled or outlined contour mesh. 
+    * A 3d rective object as an alternative example.
 * Spreaded or padding more closer between elements.
 * All the styles are handled by a Presets Manager.
 * Smoother to customize animation speed and release behavior.
