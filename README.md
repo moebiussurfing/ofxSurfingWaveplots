@@ -12,7 +12,7 @@
 ## FEATURES
 - Scalable and draggable layout.
 - Styles editor with presets.
-- Optional: WIP **Bloom Shader** for plot post fx styling. 
+- Optional: WIP **Bloom Shader** for post fx styling. 
 - Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
@@ -53,12 +53,14 @@ void ofApp::drawGui()
     ui.Begin();
     {
         //..
+
         waveformPlot.drawImGui(false);
     }
     ui.End();
 }
 void ofApp::audioIn(ofSoundBuffer& input) 
 {
+    // Feed the waveformPlot object
     // Look example
 }
 ```
