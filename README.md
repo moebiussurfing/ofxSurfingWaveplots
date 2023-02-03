@@ -12,9 +12,8 @@
 ## FEATURES
 - Scalable and draggable layout.
 - Styles editor with presets.
-- Optional: WIP **Bloom Shader** for plot styling. 
-- Easily integrable with my add-on:  
-    [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager)  
+- Optional: WIP **Bloom Shader** for plot post fx styling. 
+- Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager)  
 
 <details>
 <summary>USAGE</summary>
@@ -74,13 +73,13 @@ void ofApp::audioIn(ofSoundBuffer& input)
 <summary>Optional</summary>
 
 * ofxGui / oF core
-* [ofxBloom](https://github.com/P-A-N/ofxBloom)
+* [ofxBloom](https://github.com/P-A-N/ofxBloom) / WIP
 </details>
 
 <details>
 <summary>TODO</summary>
 
-* Improve plotting performance using ofMesh.
+* Improve plotting performance using `ofMesh`.
 * Add **VU meters** maybe from ImGui widgets or **ofxSoundObjects**.
 </details>
 
