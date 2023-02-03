@@ -13,17 +13,16 @@
 - Scalable and draggable box container.
 - Extra gain control for scaling.
 - Combine different reactive to the audio elements: 
-        - Scope lines. 
-        - Thin lines. 
-        - Rounded bars.
-        - Circled shaped.
-        - Filled or outlined mesh. 
-        - A 3d rective object as example.
-        - Spreaded or padding more closer between elements.
-        - ...etc.
-- All the styles editor with a Presets Manager.
+        * Scope lines. 
+        * Thin lines. 
+        * Rounded bars.
+        * Circled shaped.
+        * Filled or outlined mesh. 
+        * A 3d rective object as example.
+        * Spreaded or padding more closer between elements.
+- All the styles are handled by a Presets Manager.
 - Smoother to customize animation speed and release behavior.
-- **OPTIONAL**: WIP **Bloom Shader** for post-fx styling. 
+- **OPTIONAL**: WIP **Bloom Shader** for shader post-FX styling. 
 - **OPTIONAL**: Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
