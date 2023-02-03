@@ -8,7 +8,7 @@
 ## Features
 - Scalable and draggable layout.
 - Styles editor with presets.
-- Optional: **Bloom Shader** for plot styling. 
+- Optional: WIP **Bloom Shader** for plot styling. 
 
 <details>
 <summary>USAGE</summary>
@@ -66,6 +66,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 * [ofxImGui](https://github.com/Daandelange/ofxImGui/) / Fork
 <details>
 <summary>Optional</summary>
+
 * ofxGui / oF core
 * [ofxBloom](https://github.com/P-A-N/ofxBloom)
 </details>
