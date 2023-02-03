@@ -1,5 +1,23 @@
 #pragma once
 
+
+/*
+
+	TODO:
+
+	WIP
+
+	fix feeding buffer into object
+	fix load settings for box and addon
+	fix broken toggle params
+	use smoothedVol (circle) for the addon vu
+	define better default variables for styles
+	fix dual channel width error. add stereo/mono mode to addon
+	add reset styles
+	split another window bc too much widgets
+
+*/
+
 /*
 
 	TODO:
@@ -14,6 +32,8 @@
 	ImGui plot https://github.com/epezent/implot_demos
 
 */
+
+
 
 //----
 
@@ -467,10 +487,10 @@ public:
 
 	void update()
 	{
-		//if (!bDoneStartup) {
-		//	bDoneStartup = true;
-		//	this->startup();
-		//}
+		if (!bDoneStartup) {
+			bDoneStartup = true;
+			this->startup();
+		}
 
 		if (boxPlotIn.isChangedShape())
 		{
@@ -735,7 +755,7 @@ public:
 			{
 				//if (!bGui_Main)
 				{
-					if (bDrawExtras) {
+					if (bDrawExtras && !bGui_Main.get()) {
 						ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
 						ui->AddSpacingSeparated();
 					}
@@ -978,6 +998,9 @@ public:
 						}
 						ui->EndTree();
 					}
+
+					ui->AddSpacingSeparated();
+					ui->Add(W_vReset, OFX_IM_BUTTON);
 				}
 
 				if (ui->isThereSpecialWindowFor(bGui_Edit)) ui->EndWindowSpecial();
@@ -1720,30 +1743,43 @@ public:
 
 		W_bScope1 = false;
 		W_bScope2 = false;
-		W_bMesh = false;
-		W_bMeshFill = true;
-		W_bMeshStroke = false;
-		W_bHLine = false;
-		W_bLine = true;
+		W_bLine = false;
 		W_bBars = false;
 		W_bCircles = false;
+
+		W_bHLine = false;
+
+		W_bMesh = true;
+		W_bMeshFill = true;
+		W_bMeshStroke = true;
+
 		W_bAbs = true;
 		W_bMirror = true;
 		W_Rounded = 0.5;
 		W_bBottom = false;
-		W_bLabel = true;
+		W_bLabel = false;
+
+		W_bClamp = true;
+		W_bClampItems = true;
 
 		//plotType = 3;
 
 		W_LineWidthScope = 2;
 		W_LineWidthLines = 3;
+		W_WidthMin = 0.1;
 
+		cPlotBoxBg = ofColor(64, 128);
+		cPlotBoxBorder = ofColor(0, 128);
+		cPlotLineBars = ofColor(0, 225);
 		cPlotFill = ofColor(0, 225);
 		cPlotStroke = ofColor(0, 225);
-		cPlotLineBars = ofColor(0, 225);
-		cPlotBoxBg = ofColor(64, 128);
 		cText = ofColor(255, 225);
 
+		// box
+		boxPlotIn.setTransparent(false);
+		boxPlotIn.setUseBorder(true);
+		boxPlotIn.setBorderColor(cPlotBoxBorder);
+		
 #ifdef USE_BLOOM
 		scale.set(0.1f);
 		thresh.set(0.1f);

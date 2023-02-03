@@ -1,21 +1,5 @@
 #pragma once
 
-/*
-
-	WIP
-
-	fix feeding buffer into object
-	fix load settings for box and addon
-	fix broken toggle params
-	use smoothedVol (circle) for the addon vu
-	define better default variables for styles
-	fix dual channel width error. add stereo/mono mode to addon
-	add reset styles
-	split another window bc too much widgets
-
-*/
-
-
 #include "ofMain.h"
 
 #include "ofxSurfingImGui.h"
