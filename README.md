@@ -11,11 +11,12 @@
 
 ## FEATURES
 - Scalable and draggable layout.
-- Styles editor with presets.
+- Combine different elements: scope lines, thin lines, rounded bars, circled shaped...etc
 - Extra gain for scale.
-- Smoother to customize smooth, speed and release behavior.
+- Styles editor with presets.
+- Smoother to customize animation speed and release behavior.
 - **OPTIONAL**: WIP **Bloom Shader** for post-fx styling. 
-- Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
+- Easily integrable [RECOMMENDED] with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
 <summary>USAGE</summary>
