@@ -1,14 +1,20 @@
 # OVERVIEW
 **openFrameworks** add-on to easily plot an audio signal waveform using different customized presets with different combined shapes and styles.  
 
-## Screenshot
+## SCREENSHOT
+
+#### exampleSimple
 ![](/exampleSimple/Capture.PNG)  
+
+#### Using ofxBloom
 ![](/exampleScene/Capture.PNG)  
 
-## Features
+## FEATURES
 - Scalable and draggable layout.
 - Styles editor with presets.
 - Optional: WIP **Bloom Shader** for plot styling. 
+- Easily integrable with my add-on:  
+    [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager)  
 
 <details>
 <summary>USAGE</summary>
@@ -59,7 +65,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 ```
 </details>
 
-## Dependencies
+## DEPENDENCIES
 * [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)
 * [ofxSurfingBox](https://github.com/moebiussurfing/ofxSurfingBox)
 * [ofxSurfingImGui](https://github.com/moebiussurfing/ofxSurfingImGui)
@@ -85,5 +91,5 @@ void ofApp::audioIn(ofSoundBuffer& input)
 An add-on by **@moebiusSurfing**  
 *(ManuMolina). 2023.*
 
-## License
+## LICENSE
 *MIT License*
