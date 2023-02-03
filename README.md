@@ -1,17 +1,20 @@
 # OVERVIEW
 **openFrameworks** add-on to easily plot an audio signal waveform using different customized presets with different combined shapes and styles.  
 
-## SCREENSHOT
+## SCREENSHOTS
 
 #### exampleSimple
 ![](/exampleSimple/Capture.PNG)  
 
-#### An example from ofxSoundDevicesManager. Using ofxBloom
+#### An example from ofxSoundDevicesManager. 
+#### Using ofxBloom.
 ![](/exampleScene/Capture.PNG)  
 
 ## FEATURES
 - Scalable and draggable layout.
 - Styles editor with presets.
+- Extra gain for scale.
+- Smoother to customize smooth, speed and release behavior.
 - **OPTIONAL**: WIP **Bloom Shader** for post-fx styling. 
 - Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
@@ -23,6 +26,7 @@
 #include "ofxSurfingImGui.h"
 #include "ofxSurfingAudioPlots.h"
 
+ofxSurfingGui ui;
 void setupGui();
 void drawGui();
 
@@ -38,7 +42,7 @@ void ofApp::setup()
     // Look the examples.
 
     waveformPlot.setup();
-    waveformPlot.setUiPtr(&ui);
+    waveformPlot.setUiPtr(&ui); // we will use a parent ui.
 }
 void ofApp::update()
 {
@@ -60,7 +64,7 @@ void ofApp::drawGui()
 }
 void ofApp::audioIn(ofSoundBuffer& input) 
 {
-    // Feed the waveformPlot object.
+    // Feed the waveformPlot object with audio samples.
     // Look the examples.
 }
 ```
@@ -72,7 +76,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 * [ofxSurfingImGui](https://github.com/moebiussurfing/ofxSurfingImGui)
 * [ofxImGui](https://github.com/Daandelange/ofxImGui/) / Fork
 <details>
-<summary>Optional</summary>
+<summary>OPTIONAL</summary>
 
 * ofxGui / oF core
 * [ofxBloom](https://github.com/P-A-N/ofxBloom) / WIP
@@ -82,7 +86,6 @@ void ofApp::audioIn(ofSoundBuffer& input)
 <summary>TODO</summary>
 
 * Improve plotting performance using `ofMesh`.
-* Add **VU meters** maybe from ImGui widgets or from **ofxSoundObjects**.
 </details>
 
 ## TESTED SYSTEMS
