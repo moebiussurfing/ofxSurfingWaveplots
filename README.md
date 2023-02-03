@@ -10,9 +10,9 @@
 ![](/exampleScene/Capture.PNG)  
 
 ## FEATURES
-- Scalable and draggable box container.
-- Extra gain control for scaling.
-- Combine different reactive to the audio elements: 
+* Scalable and draggable box container.
+* Extra gain control for scaling.
+* Combine different reactive to the audio elements:  
                * Scope lines. 
                * Thin lines. 
                * Rounded bars.
@@ -20,10 +20,10 @@
                * Filled or outlined mesh. 
                * A 3d rective object as example.
                * Spreaded or padding more closer between elements.
-- All the styles are handled by a Presets Manager.
-- Smoother to customize animation speed and release behavior.
-- **OPTIONAL**: WIP **Bloom Shader** for shader post-FX styling. 
-- **OPTIONAL**: Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
+* All the styles are handled by a Presets Manager.
+* Smoother to customize animation speed and release behavior.
+* **OPTIONAL**: WIP **Bloom Shader** for shader post-FX styling. 
+* **OPTIONAL**: Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
 <summary>USAGE</summary>
