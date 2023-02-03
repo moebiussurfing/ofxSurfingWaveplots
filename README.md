@@ -38,11 +38,11 @@ void ofApp::setup()
     // Look example
 
     waveformPlot.setup();
-	waveformPlot.setUiPtr(&ui);
+    waveformPlot.setUiPtr(&ui);
 }
 void ofApp::update()
 {
-	waveformPlot.update();
+    waveformPlot.update();
 }
 void ofApp::draw()
 {
@@ -51,11 +51,11 @@ void ofApp::draw()
 void ofApp::drawGui()
 {
     ui.Begin();
-	{
+    {
         //..
         waveformPlot.drawImGui(false);
     }
-	ui.End();
+    ui.End();
 }
 void ofApp::audioIn(ofSoundBuffer& input) 
 {
