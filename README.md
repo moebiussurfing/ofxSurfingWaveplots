@@ -6,13 +6,13 @@
 #### exampleSimple
 ![](/exampleSimple/Capture.PNG)  
 
-#### Example from ofxSoundDevicesManager using ofxBloom
+#### An example from ofxSoundDevicesManager. Using ofxBloom
 ![](/exampleScene/Capture.PNG)  
 
 ## FEATURES
 - Scalable and draggable layout.
 - Styles editor with presets.
-- Optional: WIP **Bloom Shader** for post fx styling. 
+- **OPTIONAL**: WIP **Bloom Shader** for post-fx styling. 
 - Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
@@ -35,7 +35,7 @@ WaveformPlot waveformPlot;
 void ofApp::setup()
 {
     setupGui();
-    // Look example
+    // Look the examples.
 
     waveformPlot.setup();
     waveformPlot.setUiPtr(&ui);
@@ -60,8 +60,8 @@ void ofApp::drawGui()
 }
 void ofApp::audioIn(ofSoundBuffer& input) 
 {
-    // Feed the waveformPlot object
-    // Look example
+    // Feed the waveformPlot object.
+    // Look the examples.
 }
 ```
 </details>
@@ -82,7 +82,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 <summary>TODO</summary>
 
 * Improve plotting performance using `ofMesh`.
-* Add **VU meters** maybe from ImGui widgets or **ofxSoundObjects**.
+* Add **VU meters** maybe from ImGui widgets or from **ofxSoundObjects**.
 </details>
 
 ## TESTED SYSTEMS
