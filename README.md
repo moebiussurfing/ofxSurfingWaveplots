@@ -6,14 +6,14 @@
 #### exampleSimple
 ![](/exampleSimple/Capture.PNG)  
 
-#### Using ofxBloom
+#### Example from ofxSoundDevicesManager using ofxBloom
 ![](/exampleScene/Capture.PNG)  
 
 ## FEATURES
 - Scalable and draggable layout.
 - Styles editor with presets.
 - Optional: WIP **Bloom Shader** for plot post fx styling. 
-- Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager)  
+- Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
 <summary>USAGE</summary>
