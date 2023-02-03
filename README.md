@@ -87,13 +87,15 @@ void ofApp::audioIn(ofSoundBuffer& input)
 <details>
 <summary>OPTIONAL</summary>
 
-* ofxGui / oF core (Probably not working _out-of-the-box_ as a replacement to `ImGu`, but could be done with some work.
+* ofxGui / oF core  
+   (Probably not working _out-of-the-box_ as a full replacement to `ofxSurfingImGui`, but could be done with some work.
 * [ofxBloom](https://github.com/P-A-N/ofxBloom) / WIP
 </details>
 
 <details>
 <summary>TODO</summary>
 
+* Fix bloom shader that fails whe resizing the fbo / box container.
 * Improve plotting performance using `ofMesh`.
 * Improve spread of elements correctly related to audio samples and buffer size.
 </details>
