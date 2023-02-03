@@ -1,22 +1,30 @@
 # OVERVIEW
-**openFrameworks** add-on to easily plot an audio signal waveform using different customized presets with different combined shapes and styles.  
+**openFrameworks** add-on to easily plot an audio signal waveform using different customized presets with many combined shapes and different styles.  
 
 ## SCREENSHOTS
 
 #### exampleSimple
 ![](/exampleSimple/Capture.PNG)  
 
-#### An example from ofxSoundDevicesManager. Using ofxBloom.
+#### An example from ofxSoundDevicesManager. (Using ofxBloom)
 ![](/exampleScene/Capture.PNG)  
 
 ## FEATURES
-- Scalable and draggable layout.
-- Combine different elements: scope lines, thin lines, rounded bars, circled shaped...etc
-- Extra gain for scale.
-- Styles editor with presets.
+- Scalable and draggable box container.
+- Extra gain control for scaling.
+- Combine different reactive to the audio elements: 
+        - Scope lines. 
+        - Thin lines. 
+        - Rounded bars.
+        - Circled shaped.
+        - Filled or outlined mesh. 
+        - A 3d rective object as example.
+        - Spreaded or padding more closer between elements.
+        - ...etc.
+- All the styles editor with a Presets Manager.
 - Smoother to customize animation speed and release behavior.
 - **OPTIONAL**: WIP **Bloom Shader** for post-fx styling. 
-- Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
+- **OPTIONAL**: Easily integrable with my add-on: [ofxSoundDevicesManager](https://github.com/moebiussurfing/ofxSoundDevicesManager).  
 
 <details>
 <summary>USAGE</summary>
@@ -42,15 +50,11 @@ void ofApp::setup()
     // Look the examples.
 
     waveformPlot.setup();
-    waveformPlot.setUiPtr(&ui); // we will use a parent ui.
+    waveformPlot.setUiPtr(&ui); // We will use a parent ui! Passed as reference.
 }
 void ofApp::update()
 {
     waveformPlot.update();
-}
-void ofApp::draw()
-{
-    waveformPlot.drawPlots();
 }
 void ofApp::drawGui()
 {
@@ -62,23 +66,28 @@ void ofApp::drawGui()
     }
     ui.End();
 }
+void ofApp::draw()
+{
+    waveformPlot.drawPlots();
+    drawGui();
+}
 void ofApp::audioIn(ofSoundBuffer& input) 
 {
-    // Feed the waveformPlot object with audio samples.
+    // Feed the waveformPlot object with the incomming audio samples.
     // Look the examples.
 }
 ```
 </details>
 
 ## DEPENDENCIES
-* [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)
-* [ofxSurfingBox](https://github.com/moebiussurfing/ofxSurfingBox)
 * [ofxSurfingImGui](https://github.com/moebiussurfing/ofxSurfingImGui)
 * [ofxImGui](https://github.com/Daandelange/ofxImGui/) / Fork
+* [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)
+* [ofxSurfingBox](https://github.com/moebiussurfing/ofxSurfingBox)
 <details>
 <summary>OPTIONAL</summary>
 
-* ofxGui / oF core
+* ofxGui / oF core (Probably not working _out-of-the-box_ as a replacement to `ImGu`, but could be done with some work.
 * [ofxBloom](https://github.com/P-A-N/ofxBloom) / WIP
 </details>
 
@@ -86,6 +95,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 <summary>TODO</summary>
 
 * Improve plotting performance using `ofMesh`.
+* Improve spread of elements correctly related to audio samples and buffer size.
 </details>
 
 ## TESTED SYSTEMS
@@ -93,7 +103,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 
 ## AUTHOR
 An add-on by **@moebiusSurfing**  
-*(ManuMolina). 2023.*
+*(ManuMolina). 2022-2023.*
 
 ## LICENSE
 *MIT License*
