@@ -3,3 +3,4 @@ ofxImGui
 ofxSurfingAudioPlots
 ofxSurfingBox
 ofxSurfingHelpers
+ofxSurfingImGui

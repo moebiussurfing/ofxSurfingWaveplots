@@ -19,7 +19,7 @@
 
 // OPTIONAL
 
-#define USE_BLOOM // Fx Shader
+//#define USE_BLOOM // Fx Shader. TODO: must fix
 
 // Extra elements
 #define USE_WAVEFORM_ROUNDED // another circled widget
@@ -635,7 +635,357 @@ public:
 		//TODO:
 		//initFbo();
 	};
+	
+	void drawImGuiMain(bool bDrawExtras = true) {
 
+		if (bGui_Main)IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_SMALL;
+
+		bool b;
+		if (ui->isThereSpecialWindowFor(bGui_Main)) b = ui->BeginWindowSpecial(bGui_Main);
+		else b = ui->BeginWindow(bGui_Main);
+		if (b)
+		{
+			if (bDrawExtras) {
+				ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
+			}
+
+			if (bDrawExtras) ui->AddSpacingSeparated();
+
+			if (bDrawExtras) {
+				ui->Add(bGui_Edit, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
+				ui->AddSpacingSeparated();
+			}
+
+			ui->Add(bGui_PlotIn, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
+			//if (bGui_PlotIn)
+			//	if (!ui->bMinimize) {
+			//		ui->Indent();
+			//		ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
+			//		ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
+			//		ui->Unindent();
+			//	}
+
+#ifndef SOUND_DEVICES_DISABLE_OUTPUT
+			ui->AddSpacingSeparated();
+			ui->Add(bGui_PlotOut, OFX_IM_TOGGLE_ROUNDED);
+			if (bGui_PlotOut)
+				if (!ui->bMinimize) {
+					ui->Indent();
+					ui->Add(boxPlotOut.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
+					ui->Add(boxPlotOut.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
+					ui->Unindent();
+				}
+#endif
+
+			ui->AddSpacingSeparated();
+
+			ui->AddLabelHuge("Style", true);
+			//ui->AddSpacing();
+
+			//--
+
+			// 2. Presets
+
+			surfingPresets.drawImGui(false);
+
+#ifdef USE_BLOOM
+			if (!ui->bMinimize)
+			{
+				ui->AddSpacingSeparated();
+
+				if (ui->BeginTree("BLOOM"))
+				{
+					ui->Add(bDraw, OFX_IM_TOGGLE);
+					if (bDraw) {
+						ui->Add(scale, OFX_IM_HSLIDER_MINI);
+						ui->Add(thresh, OFX_IM_HSLIDER_MINI);
+						ui->Add(brightness, OFX_IM_HSLIDER_MINI);
+					}
+					ui->EndTree();
+				}
+			}
+#endif
+			//--
+
+			if (!ui->bMinimize) {
+				ui->AddSpacingSeparated();
+				ui->Add(ui->bDebug, OFX_IM_TOGGLE_ROUNDED_MINI);
+				if (ui->bDebug) {
+					ui->AddLabel("Elements: " + ofToString(countsamples + 1));
+				}
+			}
+
+			//--
+
+			if (ui->isThereSpecialWindowFor(bGui_Main)) ui->EndWindowSpecial();
+			else ui->EndWindow();
+		}
+
+	};
+	
+	void drawImGuiEdit(bool bDrawExtras = true)
+	{
+		//if (!ui->bMinimize)
+		{
+			//if(bGui_Edit) IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_MEDIUM;
+			bool b;
+			if (ui->isThereSpecialWindowFor(bGui_Edit)) b = ui->BeginWindowSpecial(bGui_Edit);
+			else b = ui->BeginWindow(bGui_Edit);
+			if (b)
+			{
+				//if (!bGui_Main)
+				{
+					if (bDrawExtras) {
+						ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
+						ui->AddSpacingSeparated();
+					}
+				}
+
+				if (bDrawExtras) {
+					ui->Add(bGui_Main, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
+					ui->AddSpacingSeparated();
+				}
+
+				//ui->Add(gain, OFX_IM_HSLIDER_MINI);
+				//ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
+
+				//--
+
+				// Center a single widget
+
+				int sz = 2;
+				float w = ui->getWidgetsWidth(sz) / sz;
+
+				SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
+				flags += SurfingGuiFlags_TooltipValue;
+
+				AddSpacingPad(w);
+				ui->Add(gain, OFX_IM_KNOB_TICKKNOB, sz, flags);
+
+				ui->AddSpacingSeparated();
+
+				//--
+
+				// Smooth
+
+				if (ui->BeginTree("SMOOTH"))
+				{
+					ui->AddSpacing();
+					ui->Add(bSmooth, OFX_IM_TOGGLE_ROUNDED_SMALL);
+					ui->AddSpacing();
+
+					if (bSmooth)
+					{
+						ui->AddCombo(typeSmooth, namesTypeSmooth);
+						ui->AddSpacing();
+
+						SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
+						flags += SurfingGuiFlags_TooltipValue;
+
+						// Two different modes/layouts
+
+						// Dual
+						if (typeSmooth == 1)
+						{
+							ImGui::Columns(3, "", false);
+							ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 4, flags);
+
+							//ImGui::PushID("##R");
+							//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 3)) {
+							//	smoothGain = 0;
+							//	smoothVal1 = 0.5;
+							//	smoothVal2 = 0.5;
+							//}
+							//ImGui::PopID();
+
+							ImGui::NextColumn();
+							ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 4);
+							string s;
+							s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
+							ui->AddTooltip(s);
+
+							ImGui::NextColumn();
+							ui->Add(smoothVal2, OFX_IM_VSLIDER_NO_LABELS, 4);
+							s = smoothVal2.getName() + " " + ofToString(smoothVal2.get(), 2);
+							ui->AddTooltip(s);
+							ImGui::Columns(1);
+						}
+
+						// Single
+						else if (typeSmooth == 0)
+						{
+							ImGui::Columns(2, "", false);
+							ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3, flags);
+
+							//ImGui::PushID("##R");
+							//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 2)) {
+							//	smoothGain = 0;
+							//	smoothVal1 = 0.5;
+							//}
+							//ImGui::PopID();
+
+							ImGui::NextColumn();
+							ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 3);
+							string s;
+							s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
+							ui->AddTooltip(s);
+							ImGui::Columns(1);
+						}
+
+						ui->AddSpacing();
+						ImGui::PushID("##R");
+						if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 1)) {
+							smoothGain = 0;
+							smoothVal1 = 0.5;
+							smoothVal2 = 0.5;
+						}
+						ImGui::PopID();
+					}
+
+					ui->EndTree();
+				}
+
+				//--
+
+				ui->AddSpacingSeparated();
+
+				// Elements
+
+				if (ui->BeginTree("ELEMENTS"))
+				{
+					ui->Add(W_bScope1, OFX_IM_TOGGLE_SMALL, 2, true);
+					ui->Add(W_bScope2, OFX_IM_TOGGLE_SMALL, 2);
+					//ui->AddSpacingSeparated();
+
+					//if(!W_bCircled){
+					ui->Add(W_bLine, OFX_IM_TOGGLE_SMALL, 2, true);
+					ui->Add(W_bBars, OFX_IM_TOGGLE_SMALL, 2);
+					ui->Add(W_bCircles, OFX_IM_TOGGLE_SMALL);
+					//ui->AddSpacing();
+
+					ui->Add(W_bMesh, OFX_IM_TOGGLE_SMALL);
+
+#ifdef USE_WAVEFORM_ROUNDED
+					//ui->AddSpacingSeparated();
+					ui->Add(roundedPlot.bDraw, OFX_IM_TOGGLE_SMALL);
+					if (roundedPlot.bDraw) ui->AddGroup(roundedPlot.params_Circled);
+#endif
+
+#ifdef USE_WAVEFORM_3D_OBJECT
+					if (ui->Add(o.bDraw, OFX_IM_TOGGLE_SMALL)) {
+						if (!o.bDraw)o.bGui = false;
+					};
+					if (o.bDraw) {
+						ui->Indent();
+						ui->Add(o.bGui, OFX_IM_TOGGLE_ROUNDED);
+						ui->Unindent();
+					}
+#endif
+					//--
+
+					if (W_bCircles || W_bBars || W_bLine || W_bMesh)
+						ui->AddSpacingSeparated();
+
+					// distribution
+					if (W_bCircles || W_bBars || W_bLine || W_bMesh)
+						ui->Add(W_Spread);
+
+					if (W_bBars) ui->Add(W_RatioWidth);
+					if (W_bCircles) ui->Add(W_RatioRad);
+
+					if (W_bCircles || W_bBars || W_bLine || W_bMesh)
+						ui->Add(W_WidthMin);
+
+					if (W_bBars) {
+						ui->AddSpacing();
+						ui->Add(W_Rounded);
+					}
+
+					ui->EndTree();
+				}
+
+				//--
+
+				// Extra
+
+				if (!ui->bMinimize)
+				{
+					ui->AddSpacingSeparated();
+
+					if (ui->BeginTree("EXTRA"))
+					{
+						SurfingGuiTypes t = OFX_IM_CHECKBOX;
+						if (W_bCircles || W_bBars || W_bLine || W_bMesh) {
+							ui->Add(W_bAbs, t);
+							ui->Add(W_bMirror, t);
+							ui->Add(W_bBottom, t);
+							ui->AddSpacing();
+						}
+						ui->Add(W_bClamp, t);
+						ui->Add(W_bClampItems, t);
+						ui->AddSpacing();
+
+						ui->Add(W_bHLine, t);
+
+						ui->EndTree();
+					}
+
+					//--
+
+					ui->AddSpacingSeparated();
+
+					if (ui->BeginTree("ESTHETIC"))
+					{
+						SurfingGuiTypes stylec = OFX_IM_COLOR_BOX_FULL_WIDTH;
+						if (ui->BeginTree("BOX"))
+						{
+							ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
+							ui->Add(W_bTransparent, OFX_IM_TOGGLE_ROUNDED_SMALL);
+							if (!W_bTransparent) ui->Add(cPlotBoxBg, stylec);
+							ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
+							if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, stylec);
+							ui->EndTree();
+						}
+
+						ui->AddSpacingSeparated();
+
+						if (W_bMesh)
+						{
+							ui->Add(W_bMeshFill, OFX_IM_TOGGLE_ROUNDED_SMALL);
+							if (W_bMeshFill)ui->Add(cPlotFill, stylec);
+
+							ui->AddSpacing();
+
+							ui->Add(W_bMeshStroke, OFX_IM_TOGGLE_ROUNDED_SMALL);
+							if (W_bMeshStroke)ui->Add(cPlotStroke, stylec);
+						}
+						if (W_bScope1 || W_bScope2 || W_bLine || W_bBars || W_bCircles)
+							ui->Add(cPlotLineBars, stylec);
+
+						if (W_bScope1 || W_bScope2 || (W_bMesh && W_bMeshStroke))
+							ui->Add(W_LineWidthScope, OFX_IM_STEPPER);
+						if (W_bLine) ui->Add(W_LineWidthLines, OFX_IM_STEPPER);
+
+						ui->Add(W_Alpha, OFX_IM_HSLIDER_MINI);
+						if (W_bCircles) ui->Add(W_AlphaCircle, OFX_IM_HSLIDER_MINI);
+
+						ui->AddSpacingSeparated();
+
+						ui->Add(W_bLabel, OFX_IM_TOGGLE_ROUNDED_MINI);
+						if (W_bLabel) {
+							ui->AddSpacing();
+							ui->Add(cText, stylec);
+						}
+						ui->EndTree();
+					}
+				}
+
+				if (ui->isThereSpecialWindowFor(bGui_Edit)) ui->EndWindowSpecial();
+				else ui->EndWindow();
+			}
+		}
+	};
+	
 	void drawImGui(bool bDrawExtras = true)
 	{
 		if (!bGui) return;
@@ -645,354 +995,13 @@ public:
 			//--
 
 			// Window Main
-
-			//if(bGui_Main)IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_SMALL;
-
-			bool b;
-			if (ui->isThereSpecialWindowFor(bGui_Main)) b = ui->BeginWindowSpecial(bGui_Main);
-			else b = ui->BeginWindow(bGui_Main);
-			if (b)
-			{
-				if (bDrawExtras) {
-					ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
-				}
-
-				if (bDrawExtras) ui->AddSpacingSeparated();
-
-				if (bDrawExtras) {
-					ui->Add(bGui_Edit, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
-					ui->AddSpacingSeparated();
-				}
-
-				ui->Add(bGui_PlotIn, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
-				//if (bGui_PlotIn)
-				//	if (!ui->bMinimize) {
-				//		ui->Indent();
-				//		ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
-				//		ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
-				//		ui->Unindent();
-				//	}
-
-#ifndef SOUND_DEVICES_DISABLE_OUTPUT
-				ui->AddSpacingSeparated();
-				ui->Add(bGui_PlotOut, OFX_IM_TOGGLE_ROUNDED);
-				if (bGui_PlotOut)
-					if (!ui->bMinimize) {
-						ui->Indent();
-						ui->Add(boxPlotOut.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
-						ui->Add(boxPlotOut.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
-						ui->Unindent();
-					}
-#endif
-
-				ui->AddSpacingSeparated();
-
-				ui->AddLabelHuge("Style", true);
-				//ui->AddSpacing();
-
-				//--
-
-				// 2. Presets
-
-				surfingPresets.drawImGui(false);
-
-#ifdef USE_BLOOM
-				if (!ui->bMinimize)
-				{
-					ui->AddSpacingSeparated();
-
-					if (ui->BeginTree("BLOOM"))
-					{
-						ui->Add(bDraw, OFX_IM_TOGGLE);
-						if (bDraw) {
-							ui->Add(scale, OFX_IM_HSLIDER_MINI);
-							ui->Add(thresh, OFX_IM_HSLIDER_MINI);
-							ui->Add(brightness, OFX_IM_HSLIDER_MINI);
-						}
-						ui->EndTree();
-					}
-				}
-#endif
-				//--
-
-				if (!ui->bMinimize) {
-					ui->AddSpacingSeparated();
-					ui->Add(ui->bDebug, OFX_IM_TOGGLE_ROUNDED_MINI);
-					if (ui->bDebug) {
-						ui->AddLabel("Elements: " + ofToString(countsamples + 1));
-					}
-				}
-
-				//--
-
-				if (ui->isThereSpecialWindowFor(bGui_Main)) ui->EndWindowSpecial();
-				else ui->EndWindow();
-			}
+			drawImGuiMain(bDrawExtras);
 
 			//----
 
 			// Window Edit
 			// Settings
-
-			//if (!ui->bMinimize)
-			{
-				//if(bGui_Edit) IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_MEDIUM;
-				bool b;
-				if (ui->isThereSpecialWindowFor(bGui_Edit)) b = ui->BeginWindowSpecial(bGui_Edit);
-				else b = ui->BeginWindow(bGui_Edit);
-				if (b)
-				{
-					//if (!bGui_Main)
-					{
-						if (bDrawExtras) {
-							ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
-							ui->AddSpacingSeparated();
-						}
-					}
-
-					if (bDrawExtras) {
-						ui->Add(bGui_Main, OFX_IM_TOGGLE_ROUNDED_MEDIUM);
-						ui->AddSpacingSeparated();
-					}
-
-					//ui->Add(gain, OFX_IM_HSLIDER_MINI);
-					//ui->Add(gain, OFX_IM_KNOB_TICKKNOB, 3);
-
-					//--
-					
-					// Center a single widget
-					
-					int sz = 2;
-					float w = ui->getWidgetsWidth(sz) / sz;
-					
-					SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
-					flags += SurfingGuiFlags_TooltipValue;
-
-					AddSpacingPad(w);
-					ui->Add(gain, OFX_IM_KNOB_TICKKNOB, sz, flags);
-
-					ui->AddSpacingSeparated();
-
-					//--
-
-					// Smooth
-
-					if (ui->BeginTree("SMOOTH"))
-					{
-						ui->AddSpacing();
-						ui->Add(bSmooth, OFX_IM_TOGGLE_ROUNDED_SMALL);
-						ui->AddSpacing();
-
-						if (bSmooth)
-						{
-							ui->AddCombo(typeSmooth, namesTypeSmooth);
-							ui->AddSpacing();
-
-							SurfingGuiFlags flags = SurfingGuiFlags_NoInput;
-							flags += SurfingGuiFlags_TooltipValue;
-
-							// Two different modes/layouts
-
-							// Dual
-							if (typeSmooth == 1)
-							{
-								ImGui::Columns(3, "", false);
-								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 4, flags);
-
-								//ImGui::PushID("##R");
-								//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 3)) {
-								//	smoothGain = 0;
-								//	smoothVal1 = 0.5;
-								//	smoothVal2 = 0.5;
-								//}
-								//ImGui::PopID();
-
-								ImGui::NextColumn();
-								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 4);
-								string s;
-								s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
-								ui->AddTooltip(s);
-
-								ImGui::NextColumn();
-								ui->Add(smoothVal2, OFX_IM_VSLIDER_NO_LABELS, 4);
-								s = smoothVal2.getName() + " " + ofToString(smoothVal2.get(), 2);
-								ui->AddTooltip(s);
-								ImGui::Columns(1);
-							}
-
-							// Single
-							else if (typeSmooth == 0)
-							{
-								ImGui::Columns(2, "", false);
-								ui->Add(smoothGain, OFX_IM_KNOB_DOTKNOB, 3, flags);
-
-								//ImGui::PushID("##R");
-								//if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 2)) {
-								//	smoothGain = 0;
-								//	smoothVal1 = 0.5;
-								//}
-								//ImGui::PopID();
-
-								ImGui::NextColumn();
-								ui->Add(smoothVal1, OFX_IM_VSLIDER_NO_LABELS, 3);
-								string s;
-								s = smoothVal1.getName() + " " + ofToString(smoothVal1.get(), 2);
-								ui->AddTooltip(s);
-								ImGui::Columns(1);
-							}
-
-							ui->AddSpacing();
-							ImGui::PushID("##R");
-							if (ui->AddButton("Reset", OFX_IM_BUTTON_SMALL, 1)) {
-								smoothGain = 0;
-								smoothVal1 = 0.5;
-								smoothVal2 = 0.5;
-							}
-							ImGui::PopID();
-						}
-
-						ui->EndTree();
-					}
-
-					//--
-
-					ui->AddSpacingSeparated();
-
-					// Elements
-
-					if (ui->BeginTree("ELEMENTS"))
-					{
-						ui->Add(W_bScope1, OFX_IM_TOGGLE_SMALL, 2, true);
-						ui->Add(W_bScope2, OFX_IM_TOGGLE_SMALL, 2);
-						//ui->AddSpacingSeparated();
-
-						//if(!W_bCircled){
-						ui->Add(W_bLine, OFX_IM_TOGGLE_SMALL, 2, true);
-						ui->Add(W_bBars, OFX_IM_TOGGLE_SMALL, 2);
-						ui->Add(W_bCircles, OFX_IM_TOGGLE_SMALL);
-						//ui->AddSpacing();
-
-						ui->Add(W_bMesh, OFX_IM_TOGGLE_SMALL);
-
-#ifdef USE_WAVEFORM_ROUNDED
-						//ui->AddSpacingSeparated();
-						ui->Add(roundedPlot.bDraw, OFX_IM_TOGGLE_SMALL);
-						if (roundedPlot.bDraw) ui->AddGroup(roundedPlot.params_Circled);
-#endif
-
-#ifdef USE_WAVEFORM_3D_OBJECT
-						if (ui->Add(o.bDraw, OFX_IM_TOGGLE_SMALL)) {
-							if (!o.bDraw)o.bGui = false;
-						};
-						if (o.bDraw) {
-							ui->Indent();
-							ui->Add(o.bGui, OFX_IM_TOGGLE_ROUNDED);
-							ui->Unindent();
-						}
-#endif
-						//--
-
-						if (W_bCircles || W_bBars || W_bLine || W_bMesh)
-							ui->AddSpacingSeparated();
-
-						// distribution
-						if (W_bCircles || W_bBars || W_bLine || W_bMesh)
-							ui->Add(W_Spread);
-
-						if (W_bBars) ui->Add(W_RatioWidth);
-						if (W_bCircles) ui->Add(W_RatioRad);
-
-						if (W_bCircles || W_bBars || W_bLine || W_bMesh)
-							ui->Add(W_WidthMin);
-
-						if (W_bBars) {
-							ui->AddSpacing();
-							ui->Add(W_Rounded);
-						}
-
-						ui->EndTree();
-					}
-
-					//--
-
-					// Extra
-
-					if (!ui->bMinimize)
-					{
-						ui->AddSpacingSeparated();
-
-						if (ui->BeginTree("EXTRA"))
-						{
-							SurfingGuiTypes t = OFX_IM_CHECKBOX;
-							if (W_bCircles || W_bBars || W_bLine || W_bMesh) {
-								ui->Add(W_bAbs, t);
-								ui->Add(W_bMirror, t);
-								ui->Add(W_bBottom, t);
-								ui->AddSpacing();
-							}
-							ui->Add(W_bClamp, t);
-							ui->Add(W_bClampItems, t);
-							ui->AddSpacing();
-
-							ui->Add(W_bHLine, t);
-
-							ui->EndTree();
-						}
-
-						//--
-
-						ui->AddSpacingSeparated();
-
-						if (ui->BeginTree("ESTHETIC"))
-						{
-							SurfingGuiTypes stylec = OFX_IM_COLOR_BOX_FULL_WIDTH;
-							if (ui->BeginTree("BOX"))
-							{
-								ui->Add(boxPlotIn.bEdit, OFX_IM_TOGGLE_ROUNDED_MINI);
-								ui->Add(W_bTransparent, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (!W_bTransparent) ui->Add(cPlotBoxBg, stylec);
-								ui->Add(boxPlotIn.bUseBorder, OFX_IM_TOGGLE_ROUNDED_MINI);
-								if (boxPlotIn.bUseBorder)ui->Add(cPlotBoxBorder, stylec);
-								ui->EndTree();
-							}
-
-							ui->AddSpacingSeparated();
-
-							if (W_bMesh)
-							{
-								ui->Add(W_bMeshFill, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (W_bMeshFill)ui->Add(cPlotFill, stylec);
-
-								ui->AddSpacing();
-
-								ui->Add(W_bMeshStroke, OFX_IM_TOGGLE_ROUNDED_SMALL);
-								if (W_bMeshStroke)ui->Add(cPlotStroke, stylec);
-							}
-							if (W_bScope1 || W_bScope2 || W_bLine || W_bBars || W_bCircles)
-								ui->Add(cPlotLineBars, stylec);
-
-							if (W_bScope1 || W_bScope2 || (W_bMesh && W_bMeshStroke))
-								ui->Add(W_LineWidthScope, OFX_IM_STEPPER);
-							if (W_bLine) ui->Add(W_LineWidthLines, OFX_IM_STEPPER);
-
-							ui->Add(W_Alpha, OFX_IM_HSLIDER_MINI);
-							if (W_bCircles) ui->Add(W_AlphaCircle, OFX_IM_HSLIDER_MINI);
-
-							ui->AddSpacingSeparated();
-
-							ui->Add(W_bLabel, OFX_IM_TOGGLE_ROUNDED_MINI);
-							if (W_bLabel) {
-								ui->AddSpacing();
-								ui->Add(cText, stylec);
-							}
-							ui->EndTree();
-						}
-					}
-
-					if (ui->isThereSpecialWindowFor(bGui_Edit)) ui->EndWindowSpecial();
-					else ui->EndWindow();
-				}
-			}
+			drawImGuiEdit(bDrawExtras);
 
 			//--
 
