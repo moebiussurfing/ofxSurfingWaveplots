@@ -6,8 +6,7 @@
 #### exampleSimple
 ![](/exampleSimple/Capture.PNG)  
 
-#### An example from ofxSoundDevicesManager. 
-#### Using ofxBloom.
+#### An example from ofxSoundDevicesManager. Using ofxBloom.
 ![](/exampleScene/Capture.PNG)  
 
 ## FEATURES
