@@ -7,6 +7,7 @@
 
 	WIP
 
+	remove special window link with soundDevices
 	fix feeding buffer into object
 	fix load settings for box and addon
 	fix broken toggle params
@@ -655,18 +656,25 @@ public:
 		//TODO:
 		//initFbo();
 	};
-	
-	void drawImGuiMain(bool bDrawExtras = true) {
 
-		if (bGui_Main)IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_SMALL;
+	void drawImGuiMain(bool bDrawExtras = true)
+	{
+		if (!bGui_Main) return;
+
+		if (bGui_Main) IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_SMALL;
 
 		bool b;
 		if (ui->isThereSpecialWindowFor(bGui_Main)) b = ui->BeginWindowSpecial(bGui_Main);
-		else b = ui->BeginWindow(bGui_Main);
+		else
+		{
+			b = ui->BeginWindow(bGui_Main);
+		}
+
 		if (b)
 		{
 			if (bDrawExtras) {
-				ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
+				ui->AddMinimizerXsToggle();
+				//ui->Add(ui->bMinimize, OFX_IM_TOGGLE_ROUNDED);
 			}
 
 			if (bDrawExtras) ui->AddSpacingSeparated();
@@ -742,15 +750,23 @@ public:
 		}
 
 	};
-	
+
 	void drawImGuiEdit(bool bDrawExtras = true)
 	{
+		if (!bGui_Edit) return;
+
 		//if (!ui->bMinimize)
 		{
 			//if(bGui_Edit) IMGUI_SUGAR__WINDOWS_CONSTRAINTSW_MEDIUM;
 			bool b;
 			if (ui->isThereSpecialWindowFor(bGui_Edit)) b = ui->BeginWindowSpecial(bGui_Edit);
-			else b = ui->BeginWindow(bGui_Edit);
+			else
+			{
+				ui->setNextWindowAfterWindowNamed(bGui_Main);
+
+				b = ui->BeginWindow(bGui_Edit);
+			}
+
 			if (b)
 			{
 				//if (!bGui_Main)
@@ -1008,7 +1024,7 @@ public:
 			}
 		}
 	};
-	
+
 	void drawImGui(bool bDrawExtras = true)
 	{
 		if (!bGui) return;
@@ -1117,7 +1133,7 @@ public:
 		{
 			ofColor c = cPlotBoxBg.get();
 			ofClear(c.r, c.g, c.b, 255);
-		}
+	}
 		else ofClear(0);
 #endif
 		//--
@@ -1624,9 +1640,9 @@ public:
 							drawLabel();
 						}
 #endif
-					}
-					ofPopMatrix();
 				}
+					ofPopMatrix();
+			}
 
 				//----
 
@@ -1681,12 +1697,12 @@ public:
 					}
 
 					ofPopMatrix();
-			}
-#endif
 		}
+#endif
+}
 			ofPopStyle();
 
-	}
+		}
 
 #ifdef USE_BLOOM
 		ofPushMatrix();
@@ -1727,7 +1743,7 @@ public:
 			ofTranslate(xb, yb);
 			drawLabel();
 			ofPopMatrix();
-}
+		}
 #endif
 
 		// box border and interaction
@@ -1779,7 +1795,7 @@ public:
 		boxPlotIn.setTransparent(false);
 		boxPlotIn.setUseBorder(true);
 		boxPlotIn.setBorderColor(cPlotBoxBorder);
-		
+
 #ifdef USE_BLOOM
 		scale.set(0.1f);
 		thresh.set(0.1f);
