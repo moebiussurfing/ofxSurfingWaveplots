@@ -95,7 +95,7 @@ void ofApp::audioIn(ofSoundBuffer& input)
 <details>
 <summary>TODO</summary>
 
-* Fix bloom shader that fails whe resizing the fbo / box container.
+* BUG: Fix bloom shader that fails whe resizing the fbo / box container.
 * Improve plotting performance using `ofMesh`.
 * Improve spread of elements correctly related to audio samples and buffer size.
 </details>
